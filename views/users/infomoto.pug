@@ -1,0 +1,82 @@
+extends layout/default
+
+block content
+    .producto-moto
+        .producto-moto__contenedor
+            .producto-moto__galeria
+                .galeria-principal
+                    img(src=moto.imagenPrincipal, alt=`${moto.marca} ${moto.modelo}`)
+
+                .galeria-miniaturas
+                    each imagen in moto.imagenesAdicionales
+                        img(src=imagen, alt=`${moto.marca} ${moto.modelo} - Vista adicional`)
+
+            .producto-moto__informacion
+                .informacion-header
+                    h1 #{moto.marca} #{moto.modelo}
+                    .precio-container
+                        .precio-actual $#{moto.precio.toLocaleString()}
+                        if moto.precioAnterior
+                            .precio-anterior $#{moto.precioAnterior.toLocaleString()}
+
+                    .colores-disponibles
+                        each color in moto.colores
+                            .color-opcion(style=`background-color: ${color}`)
+
+                .acciones-compra
+                    button.btn.btn--primary Comprar
+                    button.btn.btn--secondary Cotizar
+                    .botones-adicionales
+                        a.btn.btn--tertiary(href="/asesoria") Asesoría
+                        a.btn.btn--quaternary(href="/calculadora") Calculadora
+
+        .especificaciones-tecnicas
+            h2 Especificaciones Técnicas
+            .especificaciones-grid
+                .especificacion
+                    h3 Freno y Grafitos
+                    p #{moto.especificaciones.frenoGrafitos}
+
+                .especificacion
+                    h3 Motor
+                    p #{moto.especificaciones.motor}
+
+                .especificacion
+                    h3 Amortiguador Unishock
+                    p #{moto.especificaciones.amortiguador}
+
+                .especificacion
+                    h3 Taller
+                    p #{moto.especificaciones.taller}
+
+        .informacion-adicional
+            h2 Descripción
+            p #{moto.descripcion}
+
+            .caracteristicas-destacadas
+                each caracteristica in moto.caracteristicasDestacadas
+                    .caracteristica
+                        h3 #{caracteristica.titulo}
+                        p #{caracteristica.descripcion}
+
+        .seccion-comparador
+            h2 Compara esta Moto
+            .comparador-grid
+                each motoComparable in moto.motosComparables
+                    .moto-comparable
+                        img(src=motoComparable.imagen, alt=`${motoComparable.marca} ${motoComparable.modelo}`)
+                        h3 #{motoComparable.marca} #{motoComparable.modelo}
+                        .precio $#{motoComparable.precio.toLocaleString()}
+                        a.btn.btn--small(href=`/motos/${motoComparable.slug}`) Comparar
+
+    script.
+        document.addEventListener('DOMContentLoaded', () => {
+            const galeriaMiniaturas = document.querySelector('.galeria-miniaturas');
+            const galeriaPrincipal = document.querySelector('.galeria-principal img');
+
+            galeriaMiniaturas.addEventListener('click', (e) => {
+                if (e.target.tagName === 'IMG') {
+                    galeriaPrincipal.src = e.target.src;
+                }
+            });
+        });

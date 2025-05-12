@@ -1,0 +1,122 @@
+extends layout/default
+
+block content
+    .calculadora-financiamiento
+        .container
+            h1 Calculadora de Financiamiento
+
+            .calculadora-contenido
+                .formulario-calculadora
+                    form#formulario-financiamiento
+                        .form-group
+                            label(for="precio-moto") Precio de la Moto
+                            input#precio-moto(type="number" name="precio" placeholder="Ingresa el precio de la moto" required min="0" step="1000")
+
+                        .form-group
+                            label(for="inicial") Cuota Inicial
+                            .input-grupo
+                                input#inicial(type="number" name="inicial" placeholder="Ingresa tu cuota inicial" required min="0" step="1000")
+                                span.porcentaje-inicial 0%
+
+                        .form-group
+                            label(for="plazo") Plazo de Financiación
+                            select#plazo(name="plazo" required)
+                                option(value="12") 12 meses
+                                option(value="24") 24 meses
+                                option(value="36") 36 meses
+                                option(value="48") 48 meses
+                                option(value="60") 60 meses
+
+                        .form-group
+                            label(for="tasa") Tasa de Interés Anual
+                            select#tasa(name="tasa" required)
+                                option(value="12") 12%
+                                option(value="15") 15%
+                                option(value="18") 18%
+                                option(value="20") 20%
+
+                        .form-group
+                            button.btn.btn--primary(type="submit") Calcular Financiamiento
+
+                .resultado-calculadora
+                    .resumen-financiamiento
+                        h2 Resumen de Financiamiento
+
+                        .detalle-financiamiento
+                            .fila
+                                span Precio de la Moto
+                                span#precio-total -
+
+                            .fila
+                                span Cuota Inicial
+                                span#cuota-inicial -
+
+                            .fila
+                                span Monto a Financiar
+                                span#monto-financiar -
+
+                            .fila
+                                span Plazo
+                                span#plazo-financiamiento -
+
+                            .fila
+                                span Tasa de Interés
+                                span#tasa-interes -
+
+                            .fila.total
+                                span Cuota Mensual
+                                span#cuota-mensual -
+
+    script.
+        document.addEventListener('DOMContentLoaded', () => {
+            const formulario = document.getElementById('formulario-financiamiento');
+            const precioMoto = document.getElementById('precio-moto');
+            const inicial = document.getElementById('inicial');
+            const plazoSelect = document.getElementById('plazo');
+            const tasaSelect = document.getElementById('tasa');
+
+            const precioTotalSpan = document.getElementById('precio-total');
+            const cuotaInicialSpan = document.getElementById('cuota-inicial');
+            const montoFinanciarSpan = document.getElementById('monto-financiar');
+            const plazoSpan = document.getElementById('plazo-financiamiento');
+            const tasaSpan = document.getElementById('tasa-interes');
+            const cuotaMensualSpan = document.getElementById('cuota-mensual');
+
+            const porcentajeInicial = document.querySelector('.porcentaje-inicial');
+
+            inicial.addEventListener('input', () => {
+                const precio = parseFloat(precioMoto.value) || 0;
+                const inicialValue = parseFloat(inicial.value) || 0;
+                const porcentaje = ((inicialValue / precio) * 100).toFixed(2);
+                porcentajeInicial.textContent = `${porcentaje}%`;
+            });
+
+            formulario.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const precio = parseFloat(precioMoto.value);
+                const inicialValue = parseFloat(inicial.value);
+                const plazo = parseInt(plazoSelect.value);
+                const tasa = parseFloat(tasaSelect.value);
+
+                if (inicialValue >= precio) {
+                    alert('La cuota inicial no puede ser mayor o igual al precio de la moto');
+                    return;
+                }
+
+                const montoFinanciar = precio - inicialValue;
+                const tasaMensual = (tasa / 100) / 12;
+
+                // Cálculo de cuota mensual usando fórmula de amortización
+                const cuotaMensual = (montoFinanciar * tasaMensual * Math.pow(1 + tasaMensual, plazo)) / 
+                    (Math.pow(1 + tasaMensual, plazo) - 1);
+
+                // Actualizar resultados
+                precioTotalSpan.textContent = `$${precio.toLocaleString()}`;
+                cuotaInicialSpan.textContent = `$${inicialValue.toLocaleString()}`;
+                montoFinanciarSpan.textContent = `$${montoFinanciar.toLocaleString()}`;
+                plazoSpan.textContent = `${plazo} meses`;
+                tasaSpan.textContent = `${tasa}%`;
+                cuotaMensualSpan.textContent = `$${cuotaMensual.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            });
+        });

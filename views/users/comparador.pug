@@ -1,0 +1,139 @@
+extends layout/default
+
+block content
+    .comparador-motos
+        .container
+            h1 Comparador de Motocicletas
+
+            .comparador-introduccion
+                p Compara las características de diferentes motocicletas para tomar la mejor decisión
+
+            .selector-motos
+                .selector-moto
+                    label(for="moto1") Selecciona Primera Moto
+                    select#moto1(name="moto1")
+                        option(value="") Selecciona una moto
+                        each moto in motos
+                            option(value=moto.id) #{moto.marca} #{moto.modelo}
+
+                .selector-moto
+                    label(for="moto2") Selecciona Segunda Moto
+                    select#moto2(name="moto2")
+                        option(value="") Selecciona una moto
+                        each moto in motos
+                            option(value=moto.id) #{moto.marca} #{moto.modelo}
+
+            .resultado-comparacion
+                .moto-comparacion
+                    .moto-1
+                        .imagen-moto
+                            img(src="/api/placeholder/300/200" alt="Moto 1")
+                        .info-moto
+                            h2#nombre-moto1 Selecciona una moto
+
+                    .moto-2
+                        .imagen-moto
+                            img(src="/api/placeholder/300/200" alt="Moto 2")
+                        .info-moto
+                            h2#nombre-moto2 Selecciona una moto
+
+                .tabla-comparacion
+                    table
+                        thead
+                            tr
+                                th Característica
+                                th 
+                                    span#moto1-nombre Moto 1
+                                th 
+                                    span#moto2-nombre Moto 2
+                        tbody
+                            tr
+                                td Precio
+                                td#precio-moto1 -
+                                td#precio-moto2 -
+                            tr
+                                td Cilindrada
+                                td#cilindrada-moto1 -
+                                td#cilindrada-moto2 -
+                            tr
+                                td Potencia
+                                td#potencia-moto1 -
+                                td#potencia-moto2 -
+                            tr
+                                td Consumo
+                                td#consumo-moto1 -
+                                td#consumo-moto2 -
+                            tr
+                                td Peso
+                                td#peso-moto1 -
+                                td#peso-moto2 -
+
+            .acciones-comparador
+                button#comparar-btn.btn.btn--primary Comparar
+                button#limpiar-btn.btn.btn--secondary Limpiar Selección
+
+    script.
+        document.addEventListener('DOMContentLoaded', () => {
+            const moto1Select = document.getElementById('moto1');
+            const moto2Select = document.getElementById('moto2');
+            const compararBtn = document.getElementById('comparar-btn');
+            const limpiarBtn = document.getElementById('limpiar-btn');
+
+            compararBtn.addEventListener('click', () => {
+                const motoId1 = moto1Select.value;
+                const motoId2 = moto2Select.value;
+
+                if (motoId1 && motoId2) {
+                    fetch(`/api/comparar-motos?moto1=${motoId1}&moto2=${motoId2}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Actualizar imágenes
+                            document.querySelector('.moto-1 .imagen-moto img').src = data.moto1.imagen;
+                            document.querySelector('.moto-2 .imagen-moto img').src = data.moto2.imagen;
+
+                            // Actualizar nombres
+                            document.getElementById('nombre-moto1').textContent = data.moto1.nombreCompleto;
+                            document.getElementById('nombre-moto2').textContent = data.moto2.nombreCompleto;
+                            document.getElementById('moto1-nombre').textContent = data.moto1.nombreCompleto;
+                            document.getElementById('moto2-nombre').textContent = data.moto2.nombreCompleto;
+
+                            // Actualizar características
+                            document.getElementById('precio-moto1').textContent = `$${data.moto1.precio.toLocaleString()}`;
+                            document.getElementById('precio-moto2').textContent = `$${data.moto2.precio.toLocaleString()}`;
+
+                            document.getElementById('cilindrada-moto1').textContent = `${data.moto1.cilindrada} cc`;
+                            document.getElementById('cilindrada-moto2').textContent = `${data.moto2.cilindrada} cc`;
+
+                            document.getElementById('potencia-moto1').textContent = `${data.moto1.potencia} HP`;
+                            document.getElementById('potencia-moto2').textContent = `${data.moto2.potencia} HP`;
+
+                            document.getElementById('consumo-moto1').textContent = `${data.moto1.consumo} km/l`;
+                            document.getElementById('consumo-moto2').textContent = `${data.moto2.consumo} km/l`;
+
+                            document.getElementById('peso-moto1').textContent = `${data.moto1.peso} kg`;
+                            document.getElementById('peso-moto2').textContent = `${data.moto2.peso} kg`;
+                        })
+                        .catch(error => console.error('Error al comparar motos:', error));
+                } else {
+                    alert('Por favor, selecciona dos motos para comparar');
+                }
+            });
+
+            limpiarBtn.addEventListener('click', () => {
+                moto1Select.selectedIndex = 0;
+                moto2Select.selectedIndex = 0;
+
+                // Restablecer imágenes y textos
+                document.querySelector('.moto-1 .imagen-moto img').src = '/api/placeholder/300/200';
+                document.querySelector('.moto-2 .imagen-moto img').src = '/api/placeholder/300/200';
+
+                document.getElementById('nombre-moto1').textContent = 'Selecciona una moto';
+                document.getElementById('nombre-moto2').textContent = 'Selecciona una moto';
+
+                const caracteristicas = ['precio', 'cilindrada', 'potencia', 'consumo', 'peso'];
+                caracteristicas.forEach(car => {
+                    document.getElementById(`${car}-moto1`).textContent = '-';
+                    document.getElementById(`${car}-moto2`).textContent = '-';
+                });
+            });
+        });

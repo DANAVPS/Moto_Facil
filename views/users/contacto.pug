@@ -1,0 +1,97 @@
+extends layout/default
+
+block content
+    section.contact-hero
+        .container
+            h1 Contáctanos
+            p Estamos listos para resolver todas tus dudas y ayudarte a encontrar la moto perfecta
+
+    section.contact-info
+        .container
+            .contact-info__grid
+                .contact-method
+                    i.icon-phone
+                    h3 Teléfonos
+                    p +34 123 456 789
+                    p +34 987 654 321
+
+                .contact-method
+                    i.icon-email
+                    h3 Correo Electrónico
+                    p ventas@tiendamotos.com
+                    p soporte@tiendamotos.com
+
+                .contact-method
+                    i.icon-location
+                    h3 Dirección
+                    p Calle Principal, 123
+                    p Ciudad, Código Postal
+
+    section.contact-form
+        .container
+            h2 Formulario de Contacto
+            form.contact-form__container(action="/enviar-contacto" method="POST")
+                .form-group
+                    label(for="nombre") Nombre Completo
+                    input#nombre(type="text" name="nombre" required placeholder="Tu nombre")
+
+                .form-group
+                    label(for="email") Correo Electrónico
+                    input#email(type="email" name="email" required placeholder="tu.correo@ejemplo.com")
+
+                .form-group
+                    label(for="telefono") Teléfono
+                    input#telefono(type="tel" name="telefono" placeholder="Opcional")
+
+                .form-group
+                    label(for="tipo-consulta") Tipo de Consulta
+                    select#tipo-consulta(name="tipo-consulta" required)
+                        option(value="") Selecciona una opción
+                        option(value="ventas") Consulta de Ventas
+                        option(value="servicio") Servicio Técnico
+                        option(value="financiamiento") Financiamiento
+                        option(value="otros") Otros
+
+                .form-group
+                    label(for="mensaje") Mensaje
+                    textarea#mensaje(name="mensaje" rows="5" required placeholder="Escribe tu mensaje aquí...")
+
+                .form-group.form-checkbox
+                    input#politica-privacidad(type="checkbox" name="politica-privacidad" required)
+                    label(for="politica-privacidad") Acepto la política de privacidad
+
+                button.btn.btn--primary(type="submit") Enviar Mensaje
+
+    section.contact-map
+        .container
+            h2 Nuestra Ubicación
+            .map-container
+                // Aquí irá el mapa (puedes insertar un iframe de Google Maps o similar)
+                img(src="/api/placeholder/800/400" alt="Ubicación de la tienda")
+
+    section.sucursales
+        .container
+            h2 Nuestras Sucursales
+            .sucursales-grid
+                .sucursal-card
+                    img(src="/img/Bajaj Boxer CT 125.png" alt="Sucursal Principal")
+                    h3 Sucursal Principal
+                    p Dirección: Calle Principal, 123
+                    p Teléfono: +34 123 456 789
+                    a.btn.btn--small(href="/sucursales") Ver Detalles
+
+                .sucursal-card
+                    img(src="/img/Yamaha XTZ 125.png" alt="Sucursal Secundaria")
+                    h3 Sucursal Secundaria
+                    p Dirección: Avenida Secundaria, 456
+                    p Teléfono: +34 987 654 321
+                    a.btn.btn--small(href="/sucursales") Ver Detalles
+
+    section.pre-footer-cta
+        .container
+            .cta-content
+                h2 ¿Aún Tienes Preguntas?
+                p Nuestro equipo está listo para ayudarte
+                .cta-buttons
+                    a.btn.btn--primary(href="/asesoria") Asesoría Personalizada
+                    a.btn.btn--secondary(href="tel:+34123456789") Llamar Ahora

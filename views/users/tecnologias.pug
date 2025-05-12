@@ -1,0 +1,136 @@
+extends layout/default
+
+block content
+    .tecnologias-container
+        .container
+            h1 Tecnologías en Motocicletas
+
+            .tecnologias-intro
+                p Descubre las innovaciones tecnológicas que están transformando el mundo de las motocicletas
+
+            .tecnologias-grid
+                .tecnologia-card
+                    .tecnologia-icono
+                        i.icon-abs Abs
+                    h2 Sistema de Frenos Antibloqueo (ABS)
+                    .tecnologia-descripcion
+                        p El Sistema de Frenos Antibloqueo (ABS) es una tecnología de seguridad crucial en motocicletas modernas.
+                    .tecnologia-ventajas
+                        h3 Ventajas
+                        ul
+                            li Previene el bloqueo de ruedas durante frenadas bruscas
+                            li Mantiene la estabilidad y la dirección del vehículo
+                            li Reduce significativamente la distancia de frenado
+                            li Aumenta la seguridad en condiciones de pavimento mojado o resbaladizo
+                    .tecnologia-funcionamiento
+                        h3 ¿Cómo Funciona?
+                        p El ABS utiliza sensores en las ruedas que detectan su velocidad de rotación. Cuando se detecta una desaceleración repentina que podría causar un bloqueo, el sistema modula la presión del freno para evitar que la rueda se bloquee.
+
+                .tecnologia-card
+                    .tecnologia-icono
+                        i.icon-cbs CBS
+                    h2 Sistema de Frenado Combinado (CBS)
+                    .tecnologia-descripcion
+                        p El Sistema de Frenado Combinado (CBS) es una tecnología que optimiza la distribución de la fuerza de frenado entre las ruedas delantera y trasera.
+                    .tecnologia-ventajas
+                        h3 Ventajas
+                            ul
+                                li Distribución equilibrada de la fuerza de frenado
+                                li Mayor estabilidad durante el frenado
+                                li Reduce el riesgo de volcamiento
+                                li Mejora la sensación de control para el piloto
+                    .tecnologia-funcionamiento
+                        h3 ¿Cómo Funciona?
+                        p Cuando se acciona el freno trasero, el sistema activa parcialmente el freno delantero, y viceversa, logrando una frenada más eficiente y equilibrada.
+
+                .tecnologia-card
+                    .tecnologia-icono
+                        i.icon-injection Full Injection
+                    h2 Inyección Electrónica (Full Injection)
+                    .tecnologia-descripcion
+                        p La Inyección Electrónica o Full Injection es un sistema avanzado de alimentación de combustible.
+                    .tecnologia-ventajas
+                        h3 Ventajas
+                            ul
+                                li Mayor eficiencia en el consumo de combustible
+                                li Reducción de emisiones contaminantes
+                                li Mejor rendimiento del motor
+                                li Arranques más suaves
+                                li Menos mantenimiento
+                    .tecnologia-funcionamiento
+                        h3 ¿Cómo Funciona?
+                        p Utiliza sensores y una computadora para calcular la cantidad exacta de combustible necesaria, inyectándolo directamente en la cámara de combustión con precisión milimétrica.
+
+                .tecnologia-card
+                    .tecnologia-icono
+                        i.icon-tcs Traction Control
+                    h2 Control de Tracción
+                    .tecnologia-descripcion
+                        p El Control de Tracción es un sistema electrónico de seguridad que previene el deslizamiento de la rueda trasera.
+                    .tecnologia-ventajas
+                        h3 Ventajas
+                            ul
+                                li Previene el patinaje de la rueda
+                                li Mejora la estabilidad en curvas
+                                li Aumenta la seguridad en superficies resbaladizas
+                                li Optimiza la transferencia de potencia
+                    .tecnologia-funcionamiento
+                        h3 ¿Cómo Funciona?
+                        p Detecta cuando la rueda trasera comienza a perder adherencia y reduce momentáneamente la potencia del motor para recuperar el control.
+
+            .tecnologias-comparativa
+                h2 Comparativa de Tecnologías
+                table.tabla-comparativa
+                    thead
+                        tr
+                            th Tecnología
+                            th Seguridad
+                            th Eficiencia
+                            th Complejidad
+                    tbody
+                        tr
+                            td ABS
+                            td Alta
+                            td Media
+                            td Media
+                        tr
+                            td CBS
+                            td Alta
+                            td Media
+                            td Baja
+                        tr
+                            td Full Injection
+                            td Media
+                            td Alta
+                            td Alta
+                        tr
+                            td Control de Tracción
+                            td Alta
+                            td Media
+                            td Alta
+
+            .tecnologias-consejos
+                h2 Consejos de Uso
+                .consejo-card
+                    h3 Mantenimiento de Sistemas Electrónicos
+                    p Para mantener estos sistemas en óptimas condiciones:
+                    ul
+                        li Realiza revisiones periódicas
+                        li No ignores las luces de advertencia
+                        li Mantén el sistema eléctrico en buenas condiciones
+                        li Consulta a un especialista ante cualquier anomalía
+
+    script.
+        document.addEventListener('DOMContentLoaded', () => {
+            const tecnologiaCards = document.querySelectorAll('.tecnologia-card');
+
+            tecnologiaCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.classList.add('hover');
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.classList.remove('hover');
+                });
+            });
+        });

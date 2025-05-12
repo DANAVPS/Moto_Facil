@@ -3,22 +3,61 @@ html(lang="es")
     head
         meta(charset="UTF-8")
         meta(name="viewport" content="width=device-width, initial-scale=1.0")
-        title Tienda de Motos
+        title Tienda de Motos | #{title}
         link(rel="stylesheet" href="/css/style.css")
-
     body
         header.header
             .container
                 .header__logo
                     a(href="/")
-                        img(src="/img/MOTOFONDO1.png",a alt="Logo Tienda de Motos")
+                        img(src="/img/MOTOFONDO1.png" alt="Logo Tienda de Motos")
                 nav.header__nav
                     ul
-                        li: a(href="/") Inicio
-                        li: a(href="/motos") Motos
-                        li: a(href="/tecnologias") Tecnologías
-                        li: a(href="/sucursales") Sucursales
-                        li: a(href="/contacto") Contacto
+                        li
+                            a(href="/") Inicio
+                        li.nav-item-dropdown
+                            a(href="#") Motos
+                            .dropdown-menu
+                                .dropdown-content
+                                    .dropdown-column
+                                        h3 Categorías
+                                        ul
+                                            li
+                                                a(href="/motos/automaticas-semiautomaticas") Automáticas y semiautomáticas
+                                            li
+                                                a(href="/motos/urbanas-trabajo") Urbanas y de trabajo
+                                            li
+                                                a(href="/motos/todo-terreno") Todo terreno
+                                            li
+                                                a(href="/motos/deportivas") Deportivas
+                                            li
+                                                a(href="/motos/super-deportivas") Súper deportivas
+                                            li
+                                                a(href="/motos/adventure") Adventure
+                                    .dropdown-column
+                                        h3 Marcas Populares
+                                        ul
+                                            li
+                                                a(href="/marcas/yamaha") Yamaha
+                                            li
+                                                a(href="/marcas/bajaj") Bajaj
+                                            li
+                                                a(href="/marcas/akt") AKT
+                                            li
+                                                a(href="/marcas/honda") Honda
+                                    .dropdown-column
+                                        h3 Ofertas Especiales
+                                        ul
+                                            li
+                                                a(href="/motos/ofertas") Motos en Promoción
+                                            li
+                                                a(href="/financiamiento") Opciones de Financiamiento
+                        li
+                            a(href="/tecnologias") Tecnologías
+                        li
+                            a(href="/sucursales") Sucursales
+                        li
+                            a(href="/contacto") Contacto
 
         main.main
             block content
@@ -34,11 +73,16 @@ html(lang="es")
                 .footer__links
                     h3 Enlaces rápidos
                     ul
-                        li: a(href="/") Inicio
-                        li: a(href="/motos") Catálogo
-                        li: a(href="/calculadora") Calculadora
-                        li: a(href="/comparador") Comparador
-                        li: a(href="/multimedia") Multimedia
+                        li
+                            a(href="/") Inicio
+                        li
+                            a(href="/motos") Catálogo
+                        li
+                            a(href="/calculadora") Calculadora
+                        li
+                            a(href="/comparador") Comparador
+                        li
+                            a(href="/multimedia") Multimedia
 
                 .footer__social
                     h3 Síguenos
@@ -58,3 +102,23 @@ html(lang="es")
                 p &copy; #{new Date().getFullYear()} Tienda de Motos. Todos los derechos reservados.
 
         script(src="/js/script.js")
+        script.
+            document.addEventListener('DOMContentLoaded', () => {
+                const dropdownTrigger = document.querySelector('.nav-item-dropdown > a');
+                const dropdownMenu = document.querySelector('.dropdown-menu');
+
+                // Hover effect
+                dropdownTrigger.addEventListener('mouseenter', () => {
+                    dropdownMenu.classList.add('show');
+                });
+
+                // Remove dropdown on mouse leave
+                document.querySelector('.nav-item-dropdown').addEventListener('mouseleave', () => {
+                    dropdownMenu.classList.remove('show');
+                });
+
+                // Click to toggle dropdown (for mobile)
+                dropdownTrigger.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    dropdownMenu.classList.toggle('show');
+                });

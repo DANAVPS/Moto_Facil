@@ -1,0 +1,169 @@
+extends layout/default
+
+block content
+    .asesoria-contenedor
+        .container
+            .seccion-encabezado
+                h1 Asesoría Personalizada de Motocicletas
+                p Encuentra la moto perfecta con nuestra ayuda especializada
+
+            .formulario-asesoria
+                form#formulario-asesoria
+                    .seccion-perfil
+                        h2 Cuéntanos sobre ti
+                        .form-group
+                            label(for="edad") Rango de Edad
+                            select#edad(name="edad" required)
+                                option(value="") Selecciona tu rango de edad
+                                option(value="16-25") 16-25 años
+                                option(value="26-35") 26-35 años
+                                option(value="36-45") 36-45 años
+                                option(value="46-55") 46-55 años
+                                option(value="56+") 56 años o más
+
+                        .form-group
+                            label(for="experiencia") Experiencia con Motocicletas
+                            select#experiencia(name="experiencia" required)
+                                option(value="") Selecciona tu nivel de experiencia
+                                option(value="novato") Novato (Principiante)
+                                option(value="intermedio") Intermedio
+                                option(value="experto") Experto
+
+                        .form-group
+                            label(for="uso-previsto") Uso Principal de la Motocicleta
+                            select#uso-previsto(name="uso-previsto" required)
+                                option(value="") Selecciona el uso principal
+                                option(value="ciudad") Uso urbano
+                                option(value="trabajo") Trabajo y mensajería
+                                option(value="recreativo") Paseos recreativos
+                                option(value="largos-viajes") Viajes largos
+                                option(value="todo-terreno") Todo terreno
+
+                        .form-group
+                            label(for="presupuesto") Rango de Presupuesto
+                            select#presupuesto(name="presupuesto" required)
+                                option(value="") Selecciona tu presupuesto
+                                option(value="0-3000000") Hasta $3,000,000
+                                option(value="3000000-6000000") $3,000,000 - $6,000,000
+                                option(value="6000000-10000000") $6,000,000 - $10,000,000
+                                option(value="10000000+") Más de $10,000,000
+
+                    .seccion-preferencias
+                        h2 Preferencias Adicionales
+                        .form-group
+                            label Tipo de Transmisión
+                            .opciones-transmision
+                                .opcion
+                                    input#transmision-manual(type="radio" name="transmision" value="manual")
+                                    label(for="transmision-manual") Manual
+                                .opcion
+                                    input#transmision-automatica(type="radio" name="transmision" value="automatica")
+                                    label(for="transmision-automatica") Automática
+                                .opcion
+                                    input#transmision-semiautomatica(type="radio" name="transmision" value="semiautomatica")
+                                    label(for="transmision-semiautomatica") Semiautomática
+
+                        .form-group
+                            label Características Importantes
+                            .opciones-caracteristicas
+                                .opcion
+                                    input#caracteristica-consumo(type="checkbox" name="caracteristicas" value="consumo")
+                                    label(for="caracteristica-consumo") Bajo consumo
+                                .opcion
+                                    input#caracteristica-potencia(type="checkbox" name="caracteristicas" value="potencia")
+                                    label(for="caracteristica-potencia") Alta potencia
+                                .opcion
+                                    input#caracteristica-confort(type="checkbox" name="caracteristicas" value="confort")
+                                    label(for="caracteristica-confort") Confort
+                                .opcion
+                                    input#caracteristica-tecnologia(type="checkbox" name="caracteristicas" value="tecnologia")
+                                    label(for="caracteristica-tecnologia") Tecnología
+
+                    .seccion-contacto
+                        h2 Información de Contacto
+                        .form-group
+                            label(for="nombre") Nombre Completo
+                            input#nombre(type="text" name="nombre" required placeholder="Tu nombre completo")
+
+                        .form-group
+                            label(for="email") Correo Electrónico
+                            input#email(type="email" name="email" required placeholder="tu.correo@ejemplo.com")
+
+                        .form-group
+                            label(for="telefono") Teléfono
+                            input#telefono(type="tel" name="telefono" required placeholder="Número de contacto")
+
+                        .form-group.politica-privacidad
+                            input#politica(type="checkbox" name="politica" required)
+                            label(for="politica") Acepto la política de privacidad y tratamiento de datos
+
+                    .seccion-envio
+                        button.btn.btn--primary(type="submit") Recibir Asesoría Personalizada
+
+            .seccion-resultado
+                h2 Resultados de tu Asesoría
+                #resultado-asesoria.resultado-motos
+                    // Aquí se mostrarán las motos recomendadas
+
+    script.
+        document.addEventListener('DOMContentLoaded', () => {
+            const formularioAsesoria = document.getElementById('formulario-asesoria');
+            const resultadoAsesoria = document.getElementById('resultado-asesoria');
+
+            formularioAsesoria.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Recopilar datos del formulario
+                const formData = new FormData(formularioAsesoria);
+                const datosAsesoria = Object.fromEntries(formData.entries());
+
+                // Convertir características a array
+                datosAsesoria.caracteristicas = formData.getAll('caracteristicas');
+
+                // Validar que se hayan seleccionado todas las opciones
+                const camposRequeridos = ['edad', 'experiencia', 'uso-previsto', 'presupuesto', 'transmision'];
+                const camposFaltantes = camposRequeridos.filter(campo => !datosAsesoria[campo]);
+
+                if (camposFaltantes.length > 0) {
+                    alert('Por favor, completa todos los campos requeridos');
+                    return;
+                }
+
+                // Enviar datos al servidor para obtener recomendaciones
+                fetch('/api/asesoria-motos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datosAsesoria)
+                })
+                .then(response => response.json())
+                .then(motosRecomendadas => {
+                    // Limpiar resultados anteriores
+                    resultadoAsesoria.innerHTML = '';
+
+                    // Mostrar motos recomendadas
+                    motosRecomendadas.forEach(moto => {
+                        const motoCarta = document.createElement('div');
+                        motoCarta.classList.add('moto-recomendada');
+                        motoCarta.innerHTML = `
+                            <img src="${moto.imagen}" alt="${moto.marca} ${moto.modelo}">
+                            <div class="info-moto">
+                                <h3>${moto.marca} ${moto.modelo}</h3>
+                                <p>Precio: $${moto.precio.toLocaleString()}</p>
+                                <p>Características: ${moto.caracteristicas.join(', ')}</p>
+                                <a href="/motos/${moto.slug}" class="btn btn--small">Ver Detalles</a>
+                            </div>
+                        `;
+                        resultadoAsesoria.appendChild(motoCarta);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error en la asesoría:', error);
+                    resultadoAsesoria.innerHTML = `
+                        <p class="error">Lo sentimos, hubo un error al procesar tu asesoría. 
+                        Por favor, inténtalo de nuevo más tarde.</p>
+                    `;
+                });
+            });
+        });
