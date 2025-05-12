@@ -1,0 +1,79 @@
+extends layout/default
+
+block content
+    section.hero
+        .container
+            .hero__content
+                h1.hero__title Descubre tu próxima motocicleta
+                p.hero__subtitle Encuentra las mejores marcas y modelos al mejor precio
+                .hero__buttons
+                    a.btn.btn--primary(href="/motos") Ver catálogo
+                    a.btn.btn--secondary(href="/calculadora") Calculadora de financiación
+            .hero__image
+                img(src="/img/MOTOFONDO2.jpg" alt="Motocicletas destacadas")
+
+    section.featured-models
+        .container
+            h2.section-title Modelos destacados
+            .models-grid
+                .model-card
+                    img(src="/img/Yamaha FZ 2.0.webp" alt="Yamaha FZ 2.0")
+                    h3 Yamaha FZ 2.0
+                    p La combinación perfecta de rendimiento y estilo
+                    a.btn.btn--small(href="/motos/yamaha-fz") Ver detalles
+
+                .model-card
+                    img(src="/img/Bajaj Pulsar NS 125.png" alt="Bajaj Pulsar NS 125")
+                    h3 Bajaj Pulsar NS 125
+                    p Deportividad y economía en un solo paquete
+                    a.btn.btn--small(href="/motos/bajaj-pulsar") Ver detalles
+
+                .model-card
+                    img(src="/img/AKT TTR 125.webp" alt="AKT TTR 125")
+                    h3 AKT TTR 125
+                    p Versatilidad para todos los caminos
+                    a.btn.btn--small(href="/motos/akt-ttr") Ver detalles
+
+    section.services
+        .container
+            h2.section-title Nuestros servicios
+            .services-grid
+                .service-card
+                    i.service-icon Financiación
+                    h3 Financiación a medida
+                    p Opciones de pago flexibles adaptadas a tus necesidades
+
+                .service-card
+                    i.service-icon Mantenimiento
+                    h3 Servicio técnico
+                    p Mecánicos especializados para el cuidado de tu moto
+
+                .service-card
+                    i.service-icon Asesoría
+                    h3 Asesoría personalizada
+                    p Te ayudamos a elegir la moto perfecta para ti
+
+                .service-card
+                    i.service-icon Comparador
+                    h3 Comparador de modelos
+                    p Compara características y precios para tomar la mejor decisión
+
+    section.brands
+        .container
+            h2.section-title Marcas disponibles
+            .brands-grid
+                img(src="/img/Yamaha Crypton 110.png" alt="Yamaha")
+                img(src="/img/AKT NKD 125.webp" alt="AKT")
+                img(src="/img/Bajaj Boxer CT 125.png" alt="Bajaj")
+                img(src="/img/Yamaha XTZ 125.png" alt="Yamaha Off-Road")
+
+    section.cta
+        .container
+            .cta__content
+                h2 ¿Listo para encontrar tu moto ideal?
+                p Visita nuestras sucursales o contáctanos para más información
+                .cta__buttons
+                    a.btn.btn--primary(href="/sucursales") Encuentra tu sucursal
+                    a.btn.btn--secondary(href="/contacto") Contáctanos
+            .cta__image
+                img(src="/img/como elegir 1 moto.png" alt="Elige tu moto perfecta")

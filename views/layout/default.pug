@@ -1,0 +1,60 @@
+doctype html
+html(lang="es")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        title Tienda de Motos
+        link(rel="stylesheet" href="/css/style.css")
+
+    body
+        header.header
+            .container
+                .header__logo
+                    a(href="/")
+                        img(src="/img/MOTOFONDO1.png",a alt="Logo Tienda de Motos")
+                nav.header__nav
+                    ul
+                        li: a(href="/") Inicio
+                        li: a(href="/motos") Motos
+                        li: a(href="/tecnologias") Tecnologías
+                        li: a(href="/sucursales") Sucursales
+                        li: a(href="/contacto") Contacto
+
+        main.main
+            block content
+
+        footer.footer
+            .container
+                .footer__info
+                    h3 Tienda de Motos
+                    p Tu distribuidor oficial de motocicletas
+                    p Contacto: info@tiendamotos.com
+                    p Teléfono: +34 123 456 789
+
+                .footer__links
+                    h3 Enlaces rápidos
+                    ul
+                        li: a(href="/") Inicio
+                        li: a(href="/motos") Catálogo
+                        li: a(href="/calculadora") Calculadora
+                        li: a(href="/comparador") Comparador
+                        li: a(href="/multimedia") Multimedia
+
+                .footer__social
+                    h3 Síguenos
+                    .social-icons
+                        a(href="#" target="_blank")
+                            i.social-icon Facebook
+                        a(href="#" target="_blank")
+                            i.social-icon Instagram
+                        a(href="#" target="_blank")
+                            i.social-icon Twitter
+
+                .footer__legal
+                    a(href="/reglamento") Reglamento
+                    a(href="/asesoria") Asesoría
+
+            .footer__copyright
+                p &copy; #{new Date().getFullYear()} Tienda de Motos. Todos los derechos reservados.
+
+        script(src="/js/script.js")
