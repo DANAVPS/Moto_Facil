@@ -26,39 +26,3 @@ block content
                         .moto-info
                             h3 #{moto.nombre}
                             a.btn.btn--small(href=`/motos/${moto.slug}`) Ver más
-
-    script.
-        document.addEventListener('DOMContentLoaded', () => {
-            const categoriaItems = document.querySelectorAll('.categoria-item');
-            const motosListado = document.querySelector('.motos-listado');
-
-            categoriaItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    // Remover clase active de todos los elementos
-                    categoriaItems.forEach(cat => cat.classList.remove('active'));
-
-                    // Agregar clase active al elemento clickeado
-                    item.classList.add('active');
-
-                    // Obtener la categoría seleccionada
-                    const categoria = item.dataset.categoria;
-
-                    // Filtrar motos
-                    fetch(`/api/motos/filtrar?categoria=${categoria}`)
-                        .then(response => response.json())
-                        .then(motos => {
-                            // Actualizar la cuadrícula de motos con los resultados filtrados
-                            motosListado.innerHTML = motos.map(moto => `
-                                <div class="moto-card">
-                                    <img src="${moto.imagen}" alt="${moto.nombre}">
-                                    <div class="moto-info">
-                                        <h3>${moto.nombre}</h3>
-                                        <a class="btn btn--small" href="/motos/${moto.slug}">Ver más</a>
-                                    </div>
-                                </div>
-                            `).join('');
-                        })
-                        .catch(error => console.error('Error al filtrar motos:', error));
-                });
-            });
-        });

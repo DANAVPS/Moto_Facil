@@ -119,18 +119,3 @@ block content
                         li No ignores las luces de advertencia
                         li Mantén el sistema eléctrico en buenas condiciones
                         li Consulta a un especialista ante cualquier anomalía
-
-    script.
-        document.addEventListener('DOMContentLoaded', () => {
-            const tecnologiaCards = document.querySelectorAll('.tecnologia-card');
-
-            tecnologiaCards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    card.classList.add('hover');
-                });
-
-                card.addEventListener('mouseleave', () => {
-                    card.classList.remove('hover');
-                });
-            });
-        });

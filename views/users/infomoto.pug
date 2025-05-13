@@ -68,15 +68,3 @@ block content
                         h3 #{motoComparable.marca} #{motoComparable.modelo}
                         .precio $#{motoComparable.precio.toLocaleString()}
                         a.btn.btn--small(href=`/motos/${motoComparable.slug}`) Comparar
-
-    script.
-        document.addEventListener('DOMContentLoaded', () => {
-            const galeriaMiniaturas = document.querySelector('.galeria-miniaturas');
-            const galeriaPrincipal = document.querySelector('.galeria-principal img');
-
-            galeriaMiniaturas.addEventListener('click', (e) => {
-                if (e.target.tagName === 'IMG') {
-                    galeriaPrincipal.src = e.target.src;
-                }
-            });
-        });
