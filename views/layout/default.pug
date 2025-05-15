@@ -55,7 +55,7 @@ html(lang="es")
                         li
                             a(href="/tecnologias") Tecnologías
                         li
-                            a(href="/sucursales") Sucursales
+                            a(href="/infomotos") Mas Informacion
                         li
                             a(href="/contacto") Contacto
 
@@ -102,23 +102,4 @@ html(lang="es")
                 p &copy; #{new Date().getFullYear()} Tienda de Motos. Todos los derechos reservados.
 
         script(src="/js/script.js")
-        script.
-            document.addEventListener('DOMContentLoaded', () => {
-                const dropdownTrigger = document.querySelector('.nav-item-dropdown > a');
-                const dropdownMenu = document.querySelector('.dropdown-menu');
-
-                // Hover effect
-                dropdownTrigger.addEventListener('mouseenter', () => {
-                    dropdownMenu.classList.add('show');
-                });
-
-                // Remove dropdown on mouse leave
-                document.querySelector('.nav-item-dropdown').addEventListener('mouseleave', () => {
-                    dropdownMenu.classList.remove('show');
-                });
-
-                // Click to toggle dropdown (for mobile)
-                dropdownTrigger.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    dropdownMenu.classList.toggle('show');
-                });
+        
