@@ -17,6 +17,27 @@ const userController = {
         }
     },
 
+    //
+    registerUser: async (req, res, next) => {
+        try {
+            const { name, email, password } = req.body;
+
+            const existingUser = await User.findByEmail(email);
+            if (existingUser) {
+                throw new AppError('El email ya está registrado', 400);
+            }
+
+            const newUser = await User.create({ name, email, password });
+
+            res.status(201).json({
+                status: 'success',
+                data: { user: newUser }
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
     // Actualizar perfil
     updateMe: async (req, res, next) => {
         try {

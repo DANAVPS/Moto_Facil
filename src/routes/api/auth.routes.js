@@ -22,31 +22,31 @@ router.post('/register', validateRegister, authController.register);
  */
 router.post('/login', validateLogin, authController.login);
 
-/**
- * @swagger
- * /api/v1/auth/refresh-token:
- *   post:
- *     summary: Refrescar token JWT
- *     tags: [Auth]
- */
-router.post('/refresh-token', authController.refreshToken);
+// /**
+//  * @swagger
+//  * /api/v1/auth/refresh-token:
+//  *   post:
+//  *     summary: Refrescar token JWT
+//  *     tags: [Auth]
+//  */
+// router.post('/refresh-token', authController.refreshToken);
 
-/**
- * @swagger
- * /api/v1/auth/forgot-password:
- *   post:
- *     summary: Solicitar restablecimiento de contraseña
- *     tags: [Auth]
- */
-router.post('/forgot-password', authController.forgotPassword);
+// /**
+//  * @swagger
+//  * /api/v1/auth/forgot-password:
+//  *   post:
+//  *     summary: Solicitar restablecimiento de contraseña
+//  *     tags: [Auth]
+//  */
+// router.post('/forgot-password', authController.forgotPassword);
 
-/**
- * @swagger
- * /api/v1/auth/reset-password:
- *   post:
- *     summary: Restablecer contraseña
- *     tags: [Auth]
- */
-router.post('/reset-password/:token', authController.resetPassword);
+// /**
+//  * @swagger
+//  * /api/v1/auth/reset-password:
+//  *   post:
+//  *     summary: Restablecer contraseña
+//  *     tags: [Auth]
+//  */
+// router.post('/reset-password/:token', authController.resetPassword);
 
 export default router;

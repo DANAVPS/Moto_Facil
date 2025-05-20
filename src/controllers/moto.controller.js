@@ -180,6 +180,38 @@ const motoController = {
         } catch (error) {
             next(error);
         }
+    },
+    // Eliminar tecnología de moto
+    removeTechnologyFromMoto: async (req, res, next) => {
+        try {
+            const { techId } = req.params;
+            await Moto.removeTechnology(req.params.id, techId);
+
+            res.status(204).json({
+                status: 'success',
+                data: null
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    },
+    // Buscar motos
+    searchMotos: async (req, res, next) => {
+        try {
+            const { query } = req.query;
+
+            const motos = await Moto.search(query);
+
+            res.json({
+                status: 'success',
+                results: motos.length,
+                data: { motos }
+            });
+
+        } catch (error) {
+            next(error);
+        }
     }
 };
 

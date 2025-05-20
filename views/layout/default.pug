@@ -8,15 +8,14 @@ html(lang="es")
     body
         header.header
             .container
-                .header__logo
-                    a(href="/")
-                        img(src="/img/MOTOFONDO1.png" alt="Logo Tienda de Motos")
                 nav.header__nav
+                    a(href="/")
+                        img(src="/img/LOGO.jpg" alt="Logo Tienda de Motos")
                     ul
                         li
                             a(href="/") Inicio
                         li.nav-item-dropdown
-                            a(href="#") Motos
+                            a(href="Motos") Motos
                             .dropdown-menu
                                 .dropdown-content
                                     .dropdown-column
@@ -53,11 +52,11 @@ html(lang="es")
                                             li
                                                 a(href="/financiamiento") Opciones de Financiamiento
                         li
-                            a(href="/tecnologias") Tecnologías
+                            a(href="/ecnologias") Tecnologías
                         li
-                            a(href="/infomotos") Mas Informacion
+                            a(href="/Infomotos") Mas Informacion
                         li
-                            a(href="/contacto") Contacto
+                            a(href="/Contacto") Contacto
 
         main.main
             block content
@@ -101,5 +100,5 @@ html(lang="es")
             .footer__copyright
                 p &copy; #{new Date().getFullYear()} Tienda de Motos. Todos los derechos reservados.
 
-        script(src="/js/script.js")
+        script(src="../../public/js/script.js")
         

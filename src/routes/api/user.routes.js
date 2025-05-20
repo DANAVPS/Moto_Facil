@@ -34,7 +34,7 @@ router.use(authController.restrictTo('admin'));
 router.post('/motos', motoController.createMoto);
 router.patch('/motos/:id', motoController.updateMoto);
 router.delete('/motos/:id', motoController.deleteMoto);
-router.post('/motos/:id/images', motoController.addMotoImage);
+router.post('/motos/:id/images', motoController.addMotoImages);
 router.post('/motos/:id/technologies', motoController.addTechnologyToMoto);
 
 // Blogs

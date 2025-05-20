@@ -14,25 +14,39 @@ const __dirname = path.dirname(__filename);
 
 // Importaciones de configuración
 import config from './config/config.js';
-import { connectDB } from './database/connection.js';
+import { verifyConnection } from './database/connection.js';
 import { globalErrorHandler } from './helper/errorhandler.js';
 
 // Importaciones de rutas
-import apiRoutes from './routes/api/user.routes.js';
-import webRoutes from './routes/web/users.routes.js';
+// API Routes
+import authRoutes from './routes/api/auth.routes.js';
+import blogRoutes from './routes/api/blog.routes.js';
+import motoRoutes from './routes/api/moto.routes.js';
+import userRoutes from './routes/api/user.routes.js';
+
+// Web Routes
+import webMotoRoutes from './routes/web/moto.routes.js';
+import webUsersRoutes from './routes/web/users.routes.js';
+import notFoundRoutes from './routes/404.routes.js';
 
 // Crear aplicación Express
 const app = express();
 
-// 1. Middlewares globales
+// 1. Configuración del motor de vistas
+app.set('view engine', 'pug'); // Usando EJS como motor de plantillas
+app.set('views', path.join(__dirname, './views')); // Directorio de vistas
+
+// 2. Middlewares globales
 app.use(cors(config.cors)); // Configuración CORS
-app.use(helmet()); // Seguridad HTTP
+app.use(helmet({
+    contentSecurityPolicy: false, // Para desarrollo, ajustar en producción
+})); // Seguridad HTTP
 app.use(morgan('dev')); // Logging de requests
 app.use(express.json({ limit: '10kb' })); // Parsear JSON
 app.use(express.urlencoded({ extended: true, limit: '10kb' })); // Parsear URL encoded
 app.use(cookieParser()); // Parsear cookies
 
-// 2. Subida de archivos
+// 3. Subida de archivos
 app.use(fileUpload({
     useTempFiles: false,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
@@ -40,11 +54,14 @@ app.use(fileUpload({
     createParentPath: true
 }));
 
-// 3. Servir archivos estáticos
-app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
+// 4. Servir archivos estáticos
+app.use('/uploads', express.static(path.join(__dirname, './public/uploads')));
+app.use('/assets', express.static(path.join(__dirname, './public/assets')));
 app.use(express.static(path.join(__dirname, '../public')));
+app.set('views', path.join(__dirname, '../views')); // <-- sube un nivel
 
-// 4. Limitar peticiones (Rate Limiting)
+
+// 5. Limitar peticiones (Rate Limiting)
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
     max: 100, // límite por IP
@@ -52,30 +69,37 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// 5. Rutas
-app.use('/api/v1', apiRoutes); // API Routes
-app.use('/', webRoutes); // Web Routes
+// 6. Rutas API
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/blogs', blogRoutes);
+app.use('/api/v1/motos', motoRoutes);
+app.use('/api/v1/users', userRoutes);
 
-// 6. Manejo de rutas no encontradas
-app.all('*', (req, res, next) => {
-    next(new AppError(`No se pudo encontrar ${req.originalUrl} en este servidor`, 404));
-});
+// 7. Rutas Web
+app.use('/motos', webMotoRoutes);
+app.use('/', webUsersRoutes);
 
-// 7. Manejo global de errores
+// 8. Documentación API
+app.use(config.api.documentationPath, express.static(path.join(__dirname, '../docs')));
+
+// 9. Manejo de rutas no encontradas
+app.use(notFoundRoutes);
+
+// 10. Manejo global de errores
 app.use(globalErrorHandler);
 
-// 8. Iniciar servidor
+// 11. Iniciar servidor
 const startServer = async () => {
     try {
         // Conectar a la base de datos
-        await connectDB();
+        await verifyConnection();
 
         // Iniciar servidor
         app.listen(config.app.port, () => {
             console.log(`🚀 Servidor ${config.app.name} corriendo en puerto ${config.app.port}`);
             console.log(`📚 Documentación API: http://localhost:${config.app.port}${config.api.documentationPath}`);
+            console.log(`🏠 Sitio web: http://localhost:${config.app.port}`);
         });
-
     } catch (error) {
         console.error('❌ No se pudo iniciar la aplicación:', error);
         process.exit(1);
