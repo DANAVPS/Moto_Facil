@@ -22,7 +22,8 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.2",
     "mysql2": "^3.14.1",
-    "pug": "^3.0.3"
+    "pug": "^3.0.3",
+    "tsconfig": "@forbeslindesay/tsconfig"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
