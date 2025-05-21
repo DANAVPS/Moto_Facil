@@ -5,12 +5,13 @@ html(lang="es")
         meta(name="viewport" content="width=device-width, initial-scale=1.0")
         title Tienda de Motos | #{title}
         link(rel="stylesheet" href="/css/style.css")
-    body
+    body    
         header.header
             .container
-                nav.header__nav
+                .header__logo
                     a(href="/")
                         img(src="/img/LOGO.jpg" alt="Logo Tienda de Motos")
+                .header__nav
                     ul
                         li
                             a(href="/") Inicio
@@ -18,43 +19,25 @@ html(lang="es")
                             a(href="Motos") Motos
                             .dropdown-menu
                                 .dropdown-content
-                                    .dropdown-column
+                                    ul.dropdown-column
                                         h3 Categorías
                                         ul
                                             li
-                                                a(href="/motos/automaticas-semiautomaticas") Automáticas y semiautomáticas
+                                                a(href="/motos/automaticassemiautomaticas") Automáticas y semiautomáticas
                                             li
-                                                a(href="/motos/urbanas-trabajo") Urbanas y de trabajo
+                                                a(href="/motos/urbanastrabajo") Urbanas y de trabajo
                                             li
-                                                a(href="/motos/todo-terreno") Todo terreno
+                                                a(href="/motos/todoterreno") Todo terreno
                                             li
                                                 a(href="/motos/deportivas") Deportivas
                                             li
-                                                a(href="/motos/super-deportivas") Súper deportivas
+                                                a(href="/motos/superdeportivas") Súper deportivas
                                             li
                                                 a(href="/motos/adventure") Adventure
-                                    .dropdown-column
-                                        h3 Marcas Populares
-                                        ul
-                                            li
-                                                a(href="/marcas/yamaha") Yamaha
-                                            li
-                                                a(href="/marcas/bajaj") Bajaj
-                                            li
-                                                a(href="/marcas/akt") AKT
-                                            li
-                                                a(href="/marcas/honda") Honda
-                                    .dropdown-column
-                                        h3 Ofertas Especiales
-                                        ul
-                                            li
-                                                a(href="/motos/ofertas") Motos en Promoción
-                                            li
-                                                a(href="/financiamiento") Opciones de Financiamiento
                         li
-                            a(href="/ecnologias") Tecnologías
+                            a(href="/Tecnologias") Tecnologías
                         li
-                            a(href="/Infomotos") Mas Informacion
+                            a(href="/blog") Blogs
                         li
                             a(href="/Contacto") Contacto
 
@@ -93,12 +76,21 @@ html(lang="es")
                         a(href="#" target="_blank")
                             i.social-icon Twitter
 
-                .footer__legal
-                    a(href="/reglamento") Reglamento
-                    a(href="/asesoria") Asesoría
+                //- .footer__legal
+                //-     a(href="/reglamento") Reglamento
+                //-     a(href="/asesoria") Asesoría
 
             .footer__copyright
                 p &copy; #{new Date().getFullYear()} Tienda de Motos. Todos los derechos reservados.
 
-        script(src="../../public/js/script.js")
+        script.
+            document.querySelectorAll('.nav-item-dropdown > a').forEach(toggle => {
+                toggle.addEventListener('click', e => {
+                    e.preventDefault();
+                    const menu = toggle.nextElementSibling;
+                    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+                });
+            });
+        
+        script(src="js/script.js")
         

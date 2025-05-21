@@ -55,10 +55,12 @@ app.use(fileUpload({
 }));
 
 // 4. Servir archivos estáticos
-app.use('/uploads', express.static(path.join(__dirname, './public/uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, './public/uploads')));
 app.use('/assets', express.static(path.join(__dirname, './public/assets')));
 app.use(express.static(path.join(__dirname, '../public')));
 app.set('views', path.join(__dirname, '../views')); // <-- sube un nivel
+app.use(express.urlencoded({ extended: true })); // Para leer formularios tipo x-www-form-urlencoded
+
 
 
 // 5. Limitar peticiones (Rate Limiting)

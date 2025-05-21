@@ -1,5 +1,4 @@
 extends ../layout/default
-
 block content
     .blogs-container
         .container
@@ -8,20 +7,18 @@ block content
             .blogs-intro
                 p Descubre los últimos artículos, consejos y novedades del mundo de las motocicletas
 
-            .filtros-blogs
-                .filtro-categoria
-                    label(for="categoria-blog") Categoría
-                    select#categoria-blog
-                        option(value="") Todas las Categorías
-                        option(value="mantenimiento") Mantenimiento
-                        option(value="consejos") Consejos de Conducción
-                        option(value="novedades") Novedades
-                        option(value="tecnica") Técnica de Motocicletas
-
-                .filtro-busqueda
-                    input(type="text" placeholder="Buscar artículos...")
-                    button.btn.btn--small Buscar
-
+            //- .filtros-blogs
+            //-     .filtro-categoria
+            //-         label(for="categoria-blog") Categoría
+            //-         select#categoria-blog
+            //-             option(value="") Todas las Categorías
+            //-             option(value="mantenimiento") Mantenimiento
+            //-             option(value="consejos") Consejos de Conducción
+            //-             option(value="novedades") Novedades
+            //-             option(value="tecnica") Técnica de Motocicletas
+            //-     .filtro-busqueda
+            //-         input(type="text" placeholder="Buscar artículos...")
+            //-         button.btn.btn--small Buscar
             .listado-blogs
                 each blog in blogs
                     .blog-card
@@ -34,7 +31,6 @@ block content
                                 span.categoria= blog.categoria
                             p.blog-extracto= blog.extracto
                             a.btn.btn--small(href=`/blogs/${blog.slug}`) Leer más
-
             .paginacion
                 button.btn.btn--secondary Anterior
                 span Página 1 de 5

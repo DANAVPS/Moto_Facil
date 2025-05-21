@@ -1,16 +1,17 @@
 import mysql from 'mysql2/promise';
 import { AppError } from '../helper/errorhandler.js';
 
-// Configuración del pool de conexiones
+// Configuración del pool de conexiones para Filess.io
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'motofacil',
+    host: "imy25.h.filess.io",
+    port: 3307,
+    user: "MOTOFACIL_settingfox",
+    password: "c627ef71f7d00a6e211bea91b499354e6230be59", // 👈 reemplaza por la real
+    database: "MOTOFACIL_settingfox",
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
-    timezone: 'local'
+    timezone: 'Z' // o 'local' si lo prefieres
 });
 
 // Verificar conexión al iniciar

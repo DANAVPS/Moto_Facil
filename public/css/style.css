@@ -37,6 +37,12 @@ body {
     background-color: var(--light-color);
 }
 
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 a {
     text-decoration: none;
     color: var(--secondary-color);
@@ -58,9 +64,7 @@ ul {
 
 .container {
     width: 100%;
-    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 15px;
 }
 
 /* Typography */
@@ -152,16 +156,23 @@ p {
 }
 
 /* Header */
-.header {
+.header .container {
     background-color: var(--white);
     box-shadow: var(--box-shadow);
     position: sticky;
     top: 0;
     z-index: 1000;
+    width: 100%;
+    display: flex;
+    /* para alinear logo y nav */
+    align-items: center;
+    justify-content: space-between;
+    /* separa logo y nav */
+    padding: 0 2rem;
 }
 
 .header__logo img {
-    height: 60px;
+    height: 80px;
     width: auto;
 }
 
@@ -188,8 +199,12 @@ p {
 .dropdown-menu {
     position: absolute;
     top: 100%;
-    left: 0;
+    left: 50%;
+    /* ✅ centra el dropdown horizontalmente */
+    transform: translateX(-50%);
+    /* ✅ lo alinea con el centro del botón "Motos" */
     width: 800px;
+    /* Puedes ajustar el ancho para que no se corte */
     background-color: var(--white);
     box-shadow: var(--box-shadow);
     border-radius: var(--border-radius);
@@ -200,6 +215,7 @@ p {
     z-index: 100;
 }
 
+
 .nav-item-dropdown:hover .dropdown-menu,
 .dropdown-menu.show {
     opacity: 1;
@@ -208,11 +224,15 @@ p {
 
 .dropdown-content {
     display: flex;
-    gap: 2rem;
+    flex-direction: column;
+    /* 👈 Esto lo cambia a vertical */
+    gap: 0.5rem;
+    /* espacio entre columnas */
 }
 
 .dropdown-column {
     flex: 1;
+    flex-direction: column;
 }
 
 .dropdown-column h3 {
@@ -228,10 +248,18 @@ p {
 }
 
 /* Footer */
-.footer {
+.footer .container {
     background-color: var(--secondary-color);
     color: var(--white);
     padding: 3rem 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* o 'space-around' o 'space-evenly' */
+    flex-wrap: wrap;
+    /* para que se acomode bien en móviles */
+    gap: 2rem;
+    /* espacio entre bloques */
 }
 
 .footer__info,
@@ -239,6 +267,10 @@ p {
 .footer__social,
 .footer__legal {
     margin-bottom: 2rem;
+    flex: 1 1 200px;
+    /* crece y se adapta */
+    min-width: 200px;
+    /* evita que se encojan demasiado */
 }
 
 .footer h3 {
@@ -464,7 +496,7 @@ p {
 }
 
 .brand-item {
-    min-width: 250px;
+    min-width: 356px;
     background-color: var(--white);
     padding: 2rem;
     border-radius: var(--border-radius);
