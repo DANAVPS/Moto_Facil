@@ -8,10 +8,8 @@ const pool = mysql.createPool({
     user: "MOTOFACIL_settingfox",
     password: "c627ef71f7d00a6e211bea91b499354e6230be59", // 👈 reemplaza por la real
     database: "MOTOFACIL_settingfox",
-    waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 2,
     queueLimit: 0,
-    timezone: 'Z' // o 'local' si lo prefieres
 });
 
 // Verificar conexión al iniciar
