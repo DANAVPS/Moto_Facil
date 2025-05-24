@@ -7,6 +7,8 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import fileUpload from 'express-fileupload';
 import cookieParser from 'cookie-parser';
+import contactoRoutes from './routes/web/users.routes.js';
+
 
 // Configuración de rutas ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -80,6 +82,7 @@ app.use('/api/v1/users', userRoutes);
 // 7. Rutas Web
 app.use('/motos', webMotoRoutes);
 app.use('/', webUsersRoutes);
+app.use('/contacto', contactoRoutes);
 
 // 8. Documentación API
 app.use(config.api.documentationPath, express.static(path.join(__dirname, '../docs')));

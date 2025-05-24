@@ -59,7 +59,6 @@ router.post('/asesoria', (req, res) => {
     res.send('¡Gracias! Hemos recibido tu solicitud de asesoría personalizada.');
 });
 
-
 router.get('/Contacto', (req, res) => {
     // Podríamos obtener motos destacadas y blogs recientes para mostrar en el home
     res.render('users/contacto', {
@@ -68,6 +67,11 @@ router.get('/Contacto', (req, res) => {
     });
 });
 
+import {
+    enviarFormularioContacto
+} from '../../controllers/contacto.controller.js';
+
+router.post('/enviar-contacto', enviarFormularioContacto);
 
 // Página de acerca de
 router.get('/Multimedia', (req, res) => {

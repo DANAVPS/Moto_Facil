@@ -6,7 +6,7 @@ const pool = mysql.createPool({
     host: "imy25.h.filess.io",
     port: 3307,
     user: "MOTOFACIL_settingfox",
-    password: "c627ef71f7d00a6e211bea91b499354e6230be59", // 👈 reemplaza por la real
+    password: "c627ef71f7d00a6e211bea91b499354e6230be59", 
     database: "MOTOFACIL_settingfox",
     connectionLimit: 2,
     queueLimit: 0,

@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch('/api/contacto', {
+                const response = await fetch('/enviar-contacto', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
