@@ -1,5 +1,7 @@
 import Blog from '../database/models/blog.js';
 import { AppError } from '../helper/errorhandler.js';
+import { query } from '../database/connection.js';
+
 
 const blogController = {
     // Obtener todos los blogs publicados
@@ -23,53 +25,37 @@ const blogController = {
             next(error);
         }
     },
-
-    // Obtener blog por slug
-    getBlogBySlug: async (req, res, next) => {
+    // Obtener blogs
+    async getBlogBySlug(req, res) {
         try {
-            const blog = await Blog.findBySlug(req.params.slug);
-
-            if (!blog) {
-                throw new AppError('No se encontró el blog con ese slug', 404);
-            }
-
-            res.json({
-                status: 'success',
-                data: { blog }
-            });
-
+            const [blogs] = await query('SELECT * FROM blogs ORDER BY created_at DESC');
+            res.render('users/blogs', { blogs });
         } catch (error) {
-            next(error);
+            console.error('Error al obtener blogs:', error);
+            res.status(500).send('Error interno del servidor');
         }
     },
 
-    // Crear nuevo blog (solo admin/editor)
-    createBlog: async (req, res, next) => {
+    // Crear blog (POST)
+    async createBlog(req, res) {
         try {
-            const { title, content, excerpt, category } = req.body;
+            const { title, content, excerpt, authorId, category, featuredImage } = req.body;
 
-            if (!req.file) {
-                throw new AppError('Por favor sube una imagen destacada', 400);
-            }
+            const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            const result = await query(
+                `INSERT INTO blogs 
+                (title, slug, content, excerpt, author_id, featured_image, category) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                [title, slug, content, excerpt, authorId, category, featuredImage]
+            );
 
-            const newBlog = await Blog.create({
-                title,
-                content,
-                excerpt,
-                authorId: req.user.id,
-                category,
-                featuredImage: req.file.filename
-            });
-
-            res.status(201).json({
-                status: 'success',
-                data: { blog: newBlog }
-            });
-
+            res.redirect('/blog');
         } catch (error) {
-            next(error);
+            console.error('Error al crear blog:', error);
+            res.status(500).send('Error al crear el blog');
         }
     },
+
 
     // Publicar blog (solo admin/editor)
     publishBlog: async (req, res, next) => {
