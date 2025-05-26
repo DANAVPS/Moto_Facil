@@ -47,18 +47,6 @@ router.get('/blog', blogController.getBlogBySlug);
 // Crear blog (desde un formulario o API)
 router.post('/blog', blogController.createBlog);
 
-router.get('/asesoria', (req, res) => {
-    res.render('users/asesoria'); // No necesitas pasar datos si no usas variables
-});
-router.post('/asesoria', (req, res) => {
-    const datos = req.body;
-
-    // Puedes guardar en base de datos, enviar por correo, o generar una respuesta
-    console.log('Formulario recibido:', datos);
-
-    res.send('¡Gracias! Hemos recibido tu solicitud de asesoría personalizada.');
-});
-
 router.get('/Contacto', (req, res) => {
     // Podríamos obtener motos destacadas y blogs recientes para mostrar en el home
     res.render('users/contacto', {
@@ -72,6 +60,10 @@ import {
 } from '../../controllers/contacto.controller.js';
 
 router.post('/enviar-contacto', enviarFormularioContacto);
+
+import { recibirAsesoria } from '../../controllers/asesoria.controller.js';
+
+router.post('/Asesoria', recibirAsesoria);
 
 // Página de acerca de
 router.get('/Multimedia', (req, res) => {

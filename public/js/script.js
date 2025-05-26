@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch('/api/asesoria', {
+                const response = await fetch('/Asesoria', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -349,6 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     const result = await response.json();
+                    console.log('Respuesta del servidor:', result);
                     showNotification('Asesoría recibida. Mostrando recomendaciones...');
                     displayRecommendedMotos(result.recomendaciones);
                 } else {
@@ -359,26 +360,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification('Error al enviar la solicitud', 'error');
             }
         });
+    };
 
-        const displayRecommendedMotos = (motos) => {
-            const resultsContainer = document.getElementById('resultado-asesoria');
+    const displayRecommendedMotos = (motos) => {
+        const resultsContainer = document.getElementById('resultado-asesoria');
 
-            if (!resultsContainer || !motos || !motos.length) {
-                showNotification('No se encontraron motos recomendadas', 'warning');
-                return;
-            }
+        if (!resultsContainer || !motos || !motos.length) {
+            showNotification('No se encontraron motos recomendadas', 'warning');
+            return;
+        }
 
-            resultsContainer.innerHTML = motos.map(moto => `
+        resultsContainer.innerHTML = motos.map(moto => `
                 <div class="moto-recomendada">
-                    <img src="${moto.imagenPrincipal}" alt="${moto.marca} ${moto.modelo}">
-                    <h3>${moto.marca} ${moto.modelo}</h3>
-                    <p class="precio">$${moto.precio.toLocaleString()}</p>
-                    <p class="categoria">${moto.categoria}</p>
-                    <a href="/motos/${moto._id}" class="btn btn--small">Ver detalles</a>
+                    <img src="${moto.main_image}" alt="${moto.brand} ${moto.model}">
+                    <h3>${moto.brand} ${moto.model}</h3>
+                    <p class="precio">$${parseFloat(moto.price).toLocaleString()}</p>
+                    <p class="categoria">${moto.category}</p>
+                    <a href="/motos/${moto.id}" class="btn btn--small">Ver detalles</a>
                 </div>
             `).join('');
-        };
     };
+
+document.addEventListener('DOMContentLoaded', setupAdvisoryForm);
 
     // --------------------------
     // Inicialización

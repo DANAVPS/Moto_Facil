@@ -13,7 +13,7 @@ block content
                         h2 Cuéntanos sobre ti
                         .form-group
                             label(for="edad") Rango de Edad
-                            select#edad(name="edad" required)
+                            select#edad(name="edad_recomendada" required)
                                 option(value="") Selecciona tu rango de edad
                                 option(value="16-25") 16-25 años
                                 option(value="26-35") 26-35 años
@@ -23,7 +23,7 @@ block content
 
                         .form-group
                             label(for="experiencia") Experiencia con Motocicletas
-                            select#experiencia(name="experiencia" required)
+                            select#experiencia(name="nivel_experiencia" required)
                                 option(value="") Selecciona tu nivel de experiencia
                                 option(value="novato") Novato (Principiante)
                                 option(value="intermedio") Intermedio
@@ -31,7 +31,7 @@ block content
 
                         .form-group
                             label(for="uso-previsto") Uso Principal de la Motocicleta
-                            select#uso-previsto(name="uso-previsto" required)
+                            select#uso-previsto(name="uso_previsto" required)
                                 option(value="") Selecciona el uso principal
                                 option(value="ciudad") Uso urbano
                                 option(value="trabajo") Trabajo y mensajería
@@ -41,7 +41,7 @@ block content
 
                         .form-group
                             label(for="presupuesto") Rango de Presupuesto
-                            select#presupuesto(name="presupuesto" required)
+                            select#presupuesto(name="presupuesto_rango" required)
                                 option(value="") Selecciona tu presupuesto
                                 option(value="0-3000000") Hasta $3,000,000
                                 option(value="3000000-6000000") $3,000,000 - $6,000,000
@@ -54,13 +54,13 @@ block content
                             label Tipo de Transmisión
                             .opciones-transmision
                                 .opcion
-                                    input#transmision-manual(type="radio" name="transmision" value="manual")
+                                    input#transmision-manual(type="radio" name="transmission" value="manual")
                                     label(for="transmision-manual") Manual
                                 .opcion
-                                    input#transmision-automatica(type="radio" name="transmision" value="automatica")
+                                    input#transmision-automatica(type="radio" name="transmission" value="automatic")
                                     label(for="transmision-automatica") Automática
                                 .opcion
-                                    input#transmision-semiautomatica(type="radio" name="transmision" value="semiautomatica")
+                                    input#transmision-semiautomatica(type="radio" name="transmission" value="semi-automatic")
                                     label(for="transmision-semiautomatica") Semiautomática
 
                         .form-group
