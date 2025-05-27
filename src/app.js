@@ -20,10 +20,10 @@ import { globalErrorHandler } from './helper/errorhandler.js';
 
 // Importaciones de rutas
 // API Routes
-import authRoutes from './routes/api/auth.routes.js';
-import blogRoutes from './routes/api/blog.routes.js';
-import motoRoutes from './routes/api/moto.routes.js';
-import userRoutes from './routes/api/user.routes.js';
+// import authRoutes from './routes/api/auth.routes.js';
+// import blogRoutes from './routes/api/blog.routes.js';
+// import motoRoutes from './routes/api/moto.routes.js';
+// import userRoutes from './routes/api/user.routes.js';
 
 // Web Routes
 import webMotoRoutes from './routes/web/moto.routes.js';
@@ -73,10 +73,10 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // 6. Rutas API
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/blogs', blogRoutes);
-app.use('/api/v1/motos', motoRoutes);
-app.use('/api/v1/users', userRoutes);
+// app.use('/api/v1/auth', authRoutes);
+// app.use('/api/v1/blogs', blogRoutes);
+// app.use('/api/v1/motos', motoRoutes);
+// app.use('/api/v1/users', userRoutes);
 
 // 7. Rutas Web
 app.use('/motos', webMotoRoutes);

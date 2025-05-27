@@ -371,17 +371,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         resultsContainer.innerHTML = motos.map(moto => `
-                <div class="moto-recomendada">
-                    <img src="${moto.main_image}" alt="${moto.brand} ${moto.model}">
-                    <h3>${moto.brand} ${moto.model}</h3>
-                    <p class="precio">$${parseFloat(moto.price).toLocaleString()}</p>
-                    <p class="categoria">${moto.category}</p>
-                    <a href="/motos/${moto.id}" class="btn btn--small">Ver detalles</a>
-                </div>
-            `).join('');
+            <div class="moto-recomendada">
+                <img src="/img/${moto.main_image}" alt="${moto.brand} ${moto.model}">
+                <h3>${moto.brand} ${moto.model}</h3>
+                <p class="precio">${parseFloat(moto.price).toLocaleString()}</p>
+                <p class="categoria">${moto.category}</p>
+                <a href="/motos/${moto.id}" class="btn btn--small">Ver detalles</a>
+            </div>
+        `).join('');
     };
 
-document.addEventListener('DOMContentLoaded', setupAdvisoryForm);
+    document.addEventListener('DOMContentLoaded', setupAdvisoryForm);
 
     // --------------------------
     // Inicialización

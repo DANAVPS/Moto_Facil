@@ -103,4 +103,12 @@ block content
             .seccion-resultado
                 h2 Resultados de tu Asesoría
                 #resultado-asesoria.resultado-motos
-                    // Aquí se mostrarán las motos recomendadas
+                    if recomendaciones && recomendaciones.length
+                        each moto in recomendaciones
+                            .tarjeta-moto
+                                img(src=`/img/${moto.main_image}` alt=moto.model)
+                                h3= moto.brand + ' ' + moto.model
+                                p= moto.description
+                                p Precio: $#{moto.price.toLocaleString('es-CO')}
+                    else
+                        p No se encontraron motos que coincidan con tu perfil.

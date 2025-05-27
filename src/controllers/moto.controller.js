@@ -11,24 +11,46 @@ const motoController = {
     // Obtener todas las motos
     getAllMotos: async (req, res, next) => {
         try {
-            const { category, minPrice, maxPrice, limit = 10, page = 1 } = req.query;
+            const { category, minPrice, maxPrice, transmission, query, limit = 10, page = 1 } = req.query;
+
+            // Construir los filtros para la consulta a la base de datos
+            const filters = {};
+            if (category) filters.category = category;
+            if (transmission) filters.transmission = transmission;
+            if (minPrice) filters.minPrice = parseFloat(minPrice);
+            if (maxPrice) filters.maxPrice = parseFloat(maxPrice);
+
+            // Si hay un query de búsqueda, puedes pasarlo a tu método findAll o search
+            // Dependiendo de cómo lo maneje tu modelo `Moto`.
+            // Por simplicidad, aquí lo incluyo en los filtros que se pasan a `findAll`.
+            if (query) filters.query = query;
 
             const motos = await Moto.findAll({
-                category,
-                minPrice: parseFloat(minPrice),
-                maxPrice: parseFloat(maxPrice),
+                ...filters, // Pasa los filtros construidos
                 limit: parseInt(limit),
                 page: parseInt(page)
             });
 
-            res.json({
-                status: 'success',
-                results: motos.length,
-                data: { motos }
+            // Puedes obtener todas las categorías y transmisiones disponibles para los filtros en la vista
+            // Esto es opcional, pero mejora la experiencia del usuario.
+            const allCategories = await Moto.getDistinctCategories(); // Necesitarás implementar este método en tu modelo
+            const allTransmissions = await Moto.getDistinctTransmissions(); // Necesitarás implementar este método en tu modelo
+
+
+            // Renderiza la vista 'users/motos.pug' y pasa la lista de motos y los filtros activos
+            res.render('users/motos', {
+                motos: motos,
+                currentCategory: category || '', // Para marcar el filtro activo en la UI
+                currentTransmission: transmission || '',
+                currentMinPrice: minPrice || '',
+                currentMaxPrice: maxPrice || '',
+                allCategories: allCategories, // Pasa las categorías para el filtro
+                allTransmissions: allTransmissions // Pasa las transmisiones para el filtro
             });
 
         } catch (error) {
-            next(error);
+            console.error('Error al obtener todas las motos para la vista:', error);
+            next(error); // Pasa el error al middleware de manejo de errores
         }
     },
 
@@ -38,20 +60,22 @@ const motoController = {
             const moto = await Moto.findById(req.params.id);
 
             if (!moto) {
-                throw new AppError('No se encontró la moto con ese ID', 404);
+                // Si la moto no se encuentra, renderiza una página de error 404
+                // Asegúrate de tener una vista '404.pug' o la que uses para errores.
+                return res.status(404).render('404', { message: 'La moto que buscas no fue encontrada.' });
             }
 
-            res.json({
-                status: 'success',
-                data: { moto }
-            });
+            // Renderiza la vista 'infomoto.pug' y pasa el objeto 'moto'
+            res.render('users/infomoto', { moto: moto });
 
         } catch (error) {
+            console.error('Error al obtener la moto por ID para la vista:', error);
+            // Pasa el error al middleware de manejo de errores si lo tienes configurado,
+            // o renderiza una página de error genérica.
             next(error);
+            // O directamente: res.status(500).render('error', { message: 'Error interno del servidor al cargar la moto.' });
         }
     },
-
-
 
     // Crear una nueva moto (solo admin)
     createMoto: async (req, res, next) => {

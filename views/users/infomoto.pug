@@ -1,70 +1,54 @@
 extends ../layout/default
 
 block content
-    .producto-moto
-        .producto-moto__contenedor
-            .producto-moto__galeria
-                .galeria-principal
-                    img(src=moto.imagenPrincipal, alt=`${moto.marca} ${moto.modelo}`)
-
-                .galeria-miniaturas
-                    each imagen in moto.imagenesAdicionales
-                        img(src=imagen, alt=`${moto.marca} ${moto.modelo} - Vista adicional`)
-
-            .producto-moto__informacion
-                .informacion-header
-                    h1 #{moto.marca} #{moto.modelo}
-                    .precio-container
-                        .precio-actual $#{moto.precio.toLocaleString()}
-                        if moto.precioAnterior
-                            .precio-anterior $#{moto.precioAnterior.toLocaleString()}
-
-                    .colores-disponibles
-                        each color in moto.colores
-                            .color-opcion(style=`background-color: ${color}`)
-
-                .acciones-compra
-                    button.btn.btn--primary Comprar
-                    button.btn.btn--secondary Cotizar
-                    .botones-adicionales
-                        a.btn.btn--tertiary(href="/asesoria") Asesoría
-                        a.btn.btn--quaternary(href="/calculadora") Calculadora
-
-        .especificaciones-tecnicas
-            h2 Especificaciones Técnicas
-            .especificaciones-grid
-                .especificacion
-                    h3 Freno y Grafitos
-                    p #{moto.especificaciones.frenoGrafitos}
-
-                .especificacion
-                    h3 Motor
-                    p #{moto.especificaciones.motor}
-
-                .especificacion
-                    h3 Amortiguador Unishock
-                    p #{moto.especificaciones.amortiguador}
-
-                .especificacion
-                    h3 Taller
-                    p #{moto.especificaciones.taller}
-
-        .informacion-adicional
-            h2 Descripción
-            p #{moto.descripcion}
-
-            .caracteristicas-destacadas
-                each caracteristica in moto.caracteristicasDestacadas
-                    .caracteristica
-                        h3 #{caracteristica.titulo}
-                        p #{caracteristica.descripcion}
-
-        .seccion-comparador
-            h2 Compara esta Moto
-            .comparador-grid
-                each motoComparable in moto.motosComparables
-                    .moto-comparable
-                        img(src=motoComparable.imagen, alt=`${motoComparable.marca} ${motoComparable.modelo}`)
-                        h3 #{motoComparable.marca} #{motoComparable.modelo}
-                        .precio $#{motoComparable.precio.toLocaleString()}
-                        a.btn.btn--small(href=`/motos/${motoComparable.slug}`) Comparar
+    .moto-detalle-contenedor
+        .container
+            .moto-detalle
+                .moto-imagen
+                    img(src=`/img/${moto.main_image}`, alt=`${moto.brand} ${moto.model}`)
+                
+                .moto-info
+                    h1= `${moto.brand} ${moto.model}`
+                    
+                    .moto-precio
+                        span.precio-etiqueta Precio:
+                        span.precio-valor $#{parseFloat(moto.price).toLocaleString('es-CO')}
+                    
+                    .moto-especificaciones
+                        h2 Especificaciones
+                        .especificaciones-grid
+                            .especificacion
+                                span.etiqueta Categoría:
+                                span.valor= moto.category
+                            
+                            .especificacion
+                                span.etiqueta Cilindraje:
+                                span.valor= `${moto.engine_cc} cc`
+                            
+                            .especificacion
+                                span.etiqueta Transmisión:
+                                span.valor= moto.transmission
+                            
+                            if moto.edad_recomendada
+                                .especificacion
+                                    span.etiqueta Edad recomendada:
+                                    span.valor= moto.edad_recomendada
+                            
+                            if moto.nivel_experiencia
+                                .especificacion
+                                    span.etiqueta Nivel de experiencia:
+                                    span.valor= moto.nivel_experiencia
+                            
+                            if moto.uso_previsto
+                                .especificacion
+                                    span.etiqueta Uso previsto:
+                                    span.valor= moto.uso_previsto
+                    
+                    .moto-descripcion
+                        h2 Descripción
+                        p= moto.description
+                    
+                    .moto-acciones
+                        button.btn.btn--primary Contactar vendedor
+                        button.btn.btn--secondary Agregar a favoritos
+                        a.btn.btn--outline(href="/Asesoria") Volver a asesoría
