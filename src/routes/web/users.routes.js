@@ -1,7 +1,7 @@
-import express from 'express';
+import express, { Router } from 'express';
 import {enviarFormularioContacto} from '../../controllers/contacto.controller.js';
 import { recibirAsesoria, mostrarDetallesMoto } from '../../controllers/asesoria.controller.js';
-import motoController from '../../controllers/moto.controller.js';
+import CalculadoraController from '../../controllers/calculadora.controller.js';
 
 const router = express.Router();
 
@@ -43,16 +43,6 @@ router.get('/Asesoria', (req, res) => {
 });
 router.post('/Asesoria', recibirAsesoria);
 
-router.get('/motos/:id', mostrarDetallesMoto);
-
-router.get('/motos', (req, res) => {
-    // Podríamos obtener motos destacadas y blogs recientes para mostrar en el home
-    res.render('users/motos', {
-        title: 'MotoApp - Tu comunidad de motocicletas',
-        user: req.user || null
-    });
-});
-router.post('/motos', motoController.getAllMotos);
 
 // Página de acerca de
 router.get('/Multimedia', (req, res) => {
@@ -61,6 +51,13 @@ router.get('/Multimedia', (req, res) => {
         user: req.user || null
     });
 });
+
+// Página de la calculadora
+router.get('/Calculadora', CalculadoraController.mostrarCalculadora);
+// Cálculo de costos (POST)
+router.post('/Calculadora/calcular', CalculadoraController.calcularCostos);
+// Obtener detalles de moto específica (AJAX o API)
+router.get('/Calculadora/moto/:moto_id', CalculadoraController.obtenerDetallesMoto);
 
 export default router;
 

@@ -1,68 +1,112 @@
 extends ../layout/default
 
 block content
-    .calculadora-financiamiento
-        .container
-            h1 Calculadora de Financiamiento
+    .container
+        .calculadora-header
+            h1 Calculadora de Costos de Motocicletas
+            p Calcula el costo total de adquirir y mantener tu motocicleta
 
-            .calculadora-contenido
-                .formulario-calculadora
-                    form#formulario-financiamiento
-                        .form-group
-                            label(for="precio-moto") Precio de la Moto
-                            input#precio-moto(type="number" name="precio" placeholder="Ingresa el precio de la moto" required min="0" step="1000")
+        if error
+            .error-message= error
 
-                        .form-group
-                            label(for="inicial") Cuota Inicial
-                            .input-grupo
-                                input#inicial(type="number" name="inicial" placeholder="Ingresa tu cuota inicial" required min="0" step="1000")
-                                span.porcentaje-inicial 0%
+        .calculadora-form
+            form#calculadoraForm
+                .form-group
+                    label(for="moto_select") Selecciona tu Motocicleta:
+                    select#moto_select(name="moto_id" required)
+                        option(value="") -- Selecciona una moto --
+                        each moto in motos
+                            option(value=moto.id data-precio=moto.price data-cilindraje=moto.engine_cc)
+                                = `${moto.brand} ${moto.model} - ${moto.engine_cc}cc - $${Number(moto.price).toLocaleString()}`
 
-                        .form-group
-                            label(for="plazo") Plazo de Financiación
-                            select#plazo(name="plazo" required)
-                                option(value="12") 12 meses
-                                option(value="24") 24 meses
-                                option(value="36") 36 meses
-                                option(value="48") 48 meses
-                                option(value="60") 60 meses
+                .form-row
+                    .form-group
+                        label(for="km_anuales") Kilómetros anuales estimados:
+                        input#km_anuales(type="number" name="km_anuales" value="12000" min="1000" max="50000" required)
+                        small Promedio: 12,000 km/año
 
-                        .form-group
-                            label(for="tasa") Tasa de Interés Anual
-                            select#tasa(name="tasa" required)
-                                option(value="12") 12%
-                                option(value="15") 15%
-                                option(value="18") 18%
-                                option(value="20") 20%
+                    .form-group
+                        label(for="anos_proyeccion") Años de proyección:
+                        input#anos_proyeccion(type="number" name="anos_proyeccion" value="5" min="1" max="10" required)
+                        small ¿Por cuántos años planeas usar la moto?
 
-                        .form-group
-                            button.btn.btn--primary(type="submit") Calcular Financiamiento
+                .form-actions
+                    button(type="submit") Calcular Costos
+                    button(type="button" id="limpiarForm") Limpiar
 
-                .resultado-calculadora
-                    .resumen-financiamiento
-                        h2 Resumen de Financiamiento
+        .moto-preview#motoPreview(style="display: none;")
+            h3 Moto Seleccionada
+            .moto-info
+                .moto-detail
+                    strong Marca: 
+                    span#motoMarca
+                .moto-detail
+                    strong Modelo: 
+                    span#motoModelo
+                .moto-detail
+                    strong Cilindraje: 
+                    span#motoCilindraje cc
+                .moto-detail
+                    strong Precio: 
+                    span#motoPrecio
 
-                        .detalle-financiamiento
-                            .fila
-                                span Precio de la Moto
-                                span#precio-total -
+        .loading#loading(style="display: none;")
+            p Calculando costos...
 
-                            .fila
-                                span Cuota Inicial
-                                span#cuota-inicial -
+        .resultados#resultados(style="display: none;")
+            h2 Resultado del Cálculo
 
-                            .fila
-                                span Monto a Financiar
-                                span#monto-financiar -
+            .resumen-costos
+                .costo-item
+                    .costo-label Precio de la Moto:
+                    .costo-valor#precioMoto
 
-                            .fila
-                                span Plazo
-                                span#plazo-financiamiento -
+                .costo-item
+                    .costo-label Impuestos Iniciales:
+                    .costo-valor#totalImpuestos
 
-                            .fila
-                                span Tasa de Interés
-                                span#tasa-interes -
+                .costo-item.destacado
+                    .costo-label Costo Inicial Total:
+                    .costo-valor#costoInicial
 
-                            .fila.total
-                                span Cuota Mensual
-                                span#cuota-mensual -
+                .costo-item
+                    .costo-label Costo Anual (Mantenimiento + Papeleo):
+                    .costo-valor#costoAnual
+
+                .costo-item.total
+                    .costo-label Costo Total Proyectado:
+                    .costo-valor#costoTotal
+
+                .costo-item.info
+                    .costo-label Costo por Kilómetro:
+                    .costo-valor#costoPorKm
+
+            .detalles-acordeon
+                .acordeon-item
+                    .acordeon-header#headerImpuestos
+                        h3 Detalles de Impuestos
+                        span.acordeon-toggle +
+                    .acordeon-content#contentImpuestos
+                        .detalle-lista#detalleImpuestos
+
+                .acordeon-item
+                    .acordeon-header#headerMantenimiento
+                        h3 Detalles de Mantenimiento Anual
+                        span.acordeon-toggle +
+                    .acordeon-content#contentMantenimiento
+                        .detalle-lista#detalleMantenimiento
+
+                .acordeon-item
+                    .acordeon-header#headerPapeleo
+                        h3 Detalles de Papeleo Anual
+                        span.acordeon-toggle +
+                    .acordeon-content#contentPapeleo
+                        .detalle-lista#detallePapeleo
+
+        .consejos
+            h3 Consejos para Reducir Costos
+            ul
+                li Mantén tu moto en buen estado para evitar reparaciones costosas
+                li Compara precios de repuestos y servicios
+                li Conduce de manera responsable para reducir el desgaste
+                li Considera el seguro voluntario para mayor protección

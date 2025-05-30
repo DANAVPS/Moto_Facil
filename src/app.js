@@ -18,13 +18,6 @@ import config from './config/config.js';
 import { verifyConnection } from './database/connection.js';
 import { globalErrorHandler } from './helper/errorhandler.js';
 
-// Importaciones de rutas
-// API Routes
-// import authRoutes from './routes/api/auth.routes.js';
-// import blogRoutes from './routes/api/blog.routes.js';
-// import motoRoutes from './routes/api/moto.routes.js';
-// import userRoutes from './routes/api/user.routes.js';
-
 // Web Routes
 import webMotoRoutes from './routes/web/moto.routes.js';
 import webUsersRoutes from './routes/web/users.routes.js';
@@ -62,8 +55,6 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.set('views', path.join(__dirname, '../views')); // <-- sube un nivel
 app.use(express.urlencoded({ extended: true })); // Para leer formularios tipo x-www-form-urlencoded
 
-
-
 // 5. Limitar peticiones (Rate Limiting)
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
@@ -72,14 +63,8 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// 6. Rutas API
-// app.use('/api/v1/auth', authRoutes);
-// app.use('/api/v1/blogs', blogRoutes);
-// app.use('/api/v1/motos', motoRoutes);
-// app.use('/api/v1/users', userRoutes);
-
 // 7. Rutas Web
-app.use('/motos', webMotoRoutes);
+app.use('/', webMotoRoutes);
 app.use('/', webUsersRoutes);
 app.use('/contacto', contactoRoutes);
 app.use('/Asesoria', asesoriaRoutes);

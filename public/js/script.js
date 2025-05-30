@@ -1,8 +1,3 @@
-/**
- * Script principal del cliente para la tienda de motos
- * Maneja la interactividad de la interfaz de usuario
- */
-
 document.addEventListener('DOMContentLoaded', () => {
     // --------------------------
     // Funciones de utilidad
@@ -58,17 +53,14 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdownTriggers.forEach(trigger => {
             const dropdown = trigger.nextElementSibling;
 
-            // Hover para desktop
             trigger.addEventListener('mouseenter', () => {
                 dropdown.classList.add('show');
             });
 
-            // Cerrar al salir
             trigger.parentElement.addEventListener('mouseleave', () => {
                 dropdown.classList.remove('show');
             });
 
-            // Click para móvil
             trigger.addEventListener('click', (e) => {
                 if (window.innerWidth <= 768) {
                     e.preventDefault();
@@ -79,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --------------------------
-    // Galería de imágenes en la página de moto
+    // Galería de imágenes
     // --------------------------
     const initImageGallery = () => {
         const mainImage = document.querySelector('.galeria-principal img');
@@ -89,10 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         thumbnails.forEach(thumbnail => {
             thumbnail.addEventListener('click', () => {
-                // Cambiar imagen principal
                 mainImage.src = thumbnail.src;
 
-                // Actualizar miniatura activa
                 thumbnails.forEach(t => t.classList.remove('active'));
                 thumbnail.classList.add('active');
             });
@@ -100,192 +90,203 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --------------------------
-    // Filtrado de motos por categoría
+    // Filtros de motos
     // --------------------------
     const setupMotoFilters = () => {
-        const filterButtons = document.querySelectorAll('.categoria-item');
-        const motoCards = document.querySelectorAll('.moto-card');
+        const transmissionSelect = document.querySelector('#filtro-transmision');
+        const categorySelect = document.querySelector('#filtro-categoria');
 
-        if (!filterButtons.length || !motoCards.length) return;
-
-        filterButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const category = button.dataset.categoria;
-
-                // Actualizar botón activo
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-
-                // Filtrar motos
-                motoCards.forEach(card => {
-                    if (category === 'todas' || card.dataset.categoria === category) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
+        if (transmissionSelect) {
+            transmissionSelect.addEventListener('change', () => {
+                applyFilters();
             });
-        });
+        }
+
+        if (categorySelect) {
+            categorySelect.addEventListener('change', () => {
+                applyFilters();
+            });
+        }
+
+        const applyFilters = () => {
+            const transmission = transmissionSelect?.value || '';
+            const category = categorySelect?.value || '';
+
+            let url = '/motos?';
+
+            if (category) url += `category=${encodeURIComponent(category)}&`;
+            if (transmission) url += `transmission=${encodeURIComponent(transmission)}`;
+
+            window.location.href = url;
+        };
     };
 
     // --------------------------
-    // Calculadora de financiamiento
+    // Calculadora de costos de moto
     // --------------------------
     const setupFinanceCalculator = () => {
-        const calculatorForm = document.getElementById('formulario-financiamiento');
+        const form = document.getElementById('calculadoraForm');
+        const resultados = document.getElementById('resultados');
+        const loading = document.getElementById('loading');
+        const limpiarBtn = document.getElementById('limpiarForm');
+        const motoSelect = document.getElementById('moto_select');
+        const motoPreview = document.getElementById('motoPreview');
 
-        if (!calculatorForm) return;
+        // Mostrar preview de moto cuando se selecciona
+        motoSelect.addEventListener('change', function () {
+            if (this.value) {
+                const selectedOption = this.options[this.selectedIndex];
+                const texto = selectedOption.textContent;
+                const partes = texto.split(' - ');
 
-        const precioMotoInput = document.getElementById('precio-moto');
-        const inicialInput = document.getElementById('inicial');
-        const plazoSelect = document.getElementById('plazo');
-        const tasaSelect = document.getElementById('tasa');
-        const porcentajeInicial = document.querySelector('.porcentaje-inicial');
+                // Extraer marca y modelo del texto
+                const marcaModelo = partes[0].split(' ');
+                const marca = marcaModelo[0];
+                const modelo = marcaModelo.slice(1).join(' ');
+                const cilindraje = selectedOption.dataset.cilindraje;
+                const precio = selectedOption.dataset.precio;
 
-        // Actualizar porcentaje inicial
-        const updateInitialPercentage = debounce(() => {
-            const precio = parseFloat(precioMotoInput.value) || 0;
-            const inicial = parseFloat(inicialInput.value) || 0;
+                // Mostrar preview
+                document.getElementById('motoMarca').textContent = marca;
+                document.getElementById('motoModelo').textContent = modelo;
+                document.getElementById('motoCilindraje').textContent = cilindraje;
+                document.getElementById('motoPrecio').textContent = `$${Number(precio).toLocaleString()}`;
 
-            if (precio > 0) {
-                const porcentaje = Math.round((inicial / precio) * 100);
-                porcentajeInicial.textContent = `${porcentaje}%`;
+                motoPreview.style.display = 'block';
             } else {
-                porcentajeInicial.textContent = '0%';
+                motoPreview.style.display = 'none';
             }
-        }, 300);
+        });
 
-        precioMotoInput.addEventListener('input', updateInitialPercentage);
-        inicialInput.addEventListener('input', updateInitialPercentage);
-
-        // Calcular financiamiento
-        calculatorForm.addEventListener('submit', (e) => {
+        // Envío del formulario
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const precio = parseFloat(precioMotoInput.value);
-            const inicial = parseFloat(inicialInput.value);
-            const plazo = parseInt(plazoSelect.value);
-            const tasa = parseFloat(tasaSelect.value) / 100 / 12; // Tasa mensual
+            // Validaciones
+            const motoId = motoSelect.value;
+            const kmAnuales = parseInt(document.getElementById('km_anuales').value);
+            const anosProyeccion = parseInt(document.getElementById('anos_proyeccion').value);
 
-            if (inicial >= precio) {
-                showNotification('La cuota inicial debe ser menor al precio total', 'error');
+            if (!motoId || isNaN(kmAnuales) || isNaN(anosProyeccion)) {
+                alert('Por favor, completa todos los campos correctamente.');
                 return;
             }
 
-            const montoFinanciar = precio - inicial;
-            const cuota = (montoFinanciar * tasa) / (1 - Math.pow(1 + tasa, -plazo));
+            // Mostrar loading
+            resultados.style.display = 'none';
+            loading.style.display = 'block';
+
+            try {
+                // Hacer petición al servidor
+                const response = await fetch('/calculadora/calcular', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        moto_id: motoId,
+                        km_anuales: kmAnuales,
+                        anos_proyeccion: anosProyeccion
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Mostrar resultados
+                    mostrarResultados(data);
+                } else {
+                    alert('Error: ' + data.message);
+                    loading.style.display = 'none';
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al procesar la solicitud');
+                loading.style.display = 'none';
+            }
+        });
+
+        // Función para mostrar resultados
+        function mostrarResultados(data) {
+            loading.style.display = 'none';
+
+            // Asignar valores calculados
+            document.getElementById('precioMoto').textContent =
+                `$${Number(data.costos.precio_moto).toLocaleString()}`;
+            document.getElementById('totalImpuestos').textContent =
+                `$${Number(data.costos.impuestos.total).toLocaleString()}`;
+            document.getElementById('costoInicial').textContent =
+                `$${Number(data.costos.costo_inicial).toLocaleString()}`;
+            document.getElementById('costoAnual').textContent =
+                `$${Number(data.costos.costo_anual_total).toLocaleString()}`;
+            document.getElementById('costoTotal').textContent =
+                `$${Number(data.costos.costo_total_proyectado).toLocaleString()}`;
+            document.getElementById('costoPorKm').textContent =
+                `$${Number(data.costos.costo_por_km).toFixed(2)}`;
+
+            // Mostrar detalles de impuestos
+            let htmlImpuestos = '<ul>';
+            data.costos.impuestos.detalle.forEach(impuesto => {
+                htmlImpuestos += `<li>${impuesto.nombre}: $${Number(impuesto.monto).toLocaleString()}</li>`;
+            });
+            htmlImpuestos += '</ul>';
+            document.getElementById('detalleImpuestos').innerHTML = htmlImpuestos;
+
+            // Mostrar detalles de mantenimiento
+            let htmlMantenimiento = '<ul>';
+            data.costos.mantenimiento_anual.detalle.forEach(mant => {
+                htmlMantenimiento += `<li>${mant.nombre}: $${Number(mant.costo_anual).toLocaleString()} 
+                (${mant.frecuencia_anual} vez${mant.frecuencia_anual > 1 ? 'es' : ''} al año)</li>`;
+            });
+            htmlMantenimiento += '</ul>';
+            document.getElementById('detalleMantenimiento').innerHTML = htmlMantenimiento;
+
+            // Mostrar detalles de papeleo
+            let htmlPapeleo = '<ul>';
+            data.costos.papeleo_anual.detalle.forEach(papel => {
+                if (papel.costo_anual > 0) { // Solo mostrar si tiene costo anual
+                    htmlPapeleo += `<li>${papel.nombre}: ${Number(papel.costo_anual).toLocaleString()} 
+                    ${papel.es_obligatorio ? '(Obligatorio)' : '(Opcional)'}</li>`;
+                }
+            });
+            htmlPapeleo += '</ul>';
+            document.getElementById('detallePapeleo').innerHTML = htmlPapeleo;
 
             // Mostrar resultados
-            document.getElementById('precio-total').textContent = `$${precio.toLocaleString()}`;
-            document.getElementById('cuota-inicial').textContent = `$${inicial.toLocaleString()}`;
-            document.getElementById('monto-financiar').textContent = `$${montoFinanciar.toLocaleString()}`;
-            document.getElementById('plazo-financiamiento').textContent = `${plazo} meses`;
-            document.getElementById('tasa-interes').textContent = `${(tasa * 12 * 100).toFixed(2)}% anual`;
-            document.getElementById('cuota-mensual').textContent = `$${cuota.toFixed(2)}`;
+            resultados.style.display = 'block';
+        }
+
+        // Funcionalidad del acordeón
+        document.querySelectorAll('.acordeon-header').forEach(header => {
+            header.addEventListener('click', function () {
+                const content = this.nextElementSibling;
+                const toggle = this.querySelector('.acordeon-toggle');
+
+                if (content.style.display === 'none' || content.style.display === '') {
+                    content.style.display = 'block';
+                    toggle.textContent = '-';
+                } else {
+                    content.style.display = 'none';
+                    toggle.textContent = '+';
+                }
+            });
+        });
+
+        // Botón limpiar
+        limpiarBtn.addEventListener('click', () => {
+            form.reset();
+            resultados.style.display = 'none';
+            motoPreview.style.display = 'none';
+            loading.style.display = 'none';
         });
     };
 
     // --------------------------
-    // Comparador de motos
+    // Comparador de motos (por implementar)
     // --------------------------
     const setupMotoComparer = () => {
-        const comparerForm = document.querySelector('.selector-motos');
-        const compareBtn = document.getElementById('comparar-btn');
-        const clearBtn = document.getElementById('limpiar-btn');
-
-        if (!comparerForm || !compareBtn) return;
-
-        // Cargar opciones de motos
-        const loadMotoOptions = async () => {
-            const motos = await fetchData('/api/motos');
-            if (!motos) return;
-
-            const select1 = document.getElementById('moto1');
-            const select2 = document.getElementById('moto2');
-
-            // Limpiar selects
-            select1.innerHTML = '<option value="">Selecciona una moto</option>';
-            select2.innerHTML = '<option value="">Selecciona una moto</option>';
-
-            // Llenar opciones
-            motos.forEach(moto => {
-                const option = document.createElement('option');
-                option.value = moto._id;
-                option.textContent = `${moto.marca} ${moto.modelo}`;
-
-                select1.appendChild(option.cloneNode(true));
-                select2.appendChild(option);
-            });
-        };
-
-        // Comparar motos
-        const compareMotos = async () => {
-            const moto1Id = document.getElementById('moto1').value;
-            const moto2Id = document.getElementById('moto2').value;
-
-            if (!moto1Id || !moto2Id) {
-                showNotification('Selecciona dos motos para comparar', 'error');
-                return;
-            }
-
-            if (moto1Id === moto2Id) {
-                showNotification('Selecciona motos diferentes para comparar', 'error');
-                return;
-            }
-
-            const [moto1, moto2] = await Promise.all([
-                fetchData(`/api/motos/${moto1Id}`),
-                fetchData(`/api/motos/${moto2Id}`)
-            ]);
-
-            if (!moto1 || !moto2) return;
-
-            // Actualizar nombres
-            document.getElementById('nombre-moto1').textContent = `${moto1.marca} ${moto1.modelo}`;
-            document.getElementById('nombre-moto2').textContent = `${moto2.marca} ${moto2.modelo}`;
-            document.getElementById('moto1-nombre').textContent = `${moto1.marca} ${moto1.modelo}`;
-            document.getElementById('moto2-nombre').textContent = `${moto2.marca} ${moto2.modelo}`;
-
-            // Actualizar imágenes
-            document.querySelector('.moto-1 .imagen-moto img').src = moto1.imagenPrincipal;
-            document.querySelector('.moto-2 .imagen-moto img').src = moto2.imagenPrincipal;
-
-            // Actualizar tabla comparativa
-            document.getElementById('precio-moto1').textContent = `$${moto1.precio.toLocaleString()}`;
-            document.getElementById('precio-moto2').textContent = `$${moto2.precio.toLocaleString()}`;
-            document.getElementById('cilindrada-moto1').textContent = moto1.especificaciones.motor || '-';
-            document.getElementById('cilindrada-moto2').textContent = moto2.especificaciones.motor || '-';
-            document.getElementById('potencia-moto1').textContent = moto1.especificaciones.potencia || '-';
-            document.getElementById('potencia-moto2').textContent = moto2.especificaciones.potencia || '-';
-            document.getElementById('consumo-moto1').textContent = moto1.especificaciones.consumo || '-';
-            document.getElementById('consumo-moto2').textContent = moto2.especificaciones.consumo || '-';
-            document.getElementById('peso-moto1').textContent = moto1.especificaciones.peso || '-';
-            document.getElementById('peso-moto2').textContent = moto2.especificaciones.peso || '-';
-        };
-
-        // Limpiar comparación
-        const clearComparison = () => {
-            document.getElementById('moto1').value = '';
-            document.getElementById('moto2').value = '';
-
-            document.getElementById('nombre-moto1').textContent = 'Selecciona una moto';
-            document.getElementById('nombre-moto2').textContent = 'Selecciona una moto';
-
-            const defaultImg = '/img/placeholder-moto.png';
-            document.querySelector('.moto-1 .imagen-moto img').src = defaultImg;
-            document.querySelector('.moto-2 .imagen-moto img').src = defaultImg;
-
-            // Resetear tabla
-            const tableCells = document.querySelectorAll('.tabla-comparacion td:not(:first-child)');
-            tableCells.forEach(cell => cell.textContent = '-');
-        };
-
-        // Event listeners
-        compareBtn.addEventListener('click', compareMotos);
-        if (clearBtn) clearBtn.addEventListener('click', clearComparison);
-
-        // Cargar opciones al cargar la página
-        loadMotoOptions();
+        // Lógica pendiente
     };
 
     // --------------------------
@@ -381,8 +382,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
-    document.addEventListener('DOMContentLoaded', setupAdvisoryForm);
-
     // --------------------------
     // Inicialización
     // --------------------------
@@ -393,62 +392,4 @@ document.addEventListener('DOMContentLoaded', () => {
     setupMotoComparer();
     setupContactForm();
     setupAdvisoryForm();
-
-    // --------------------------
-    // Estilos dinámicos
-    // --------------------------
-    const style = document.createElement('style');
-    style.textContent = `
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 5px;
-            color: white;
-            z-index: 1000;
-            transform: translateX(0);
-            transition: transform 0.3s ease;
-        }
-    
-        .notification.success {
-            background-color: #4CAF50;
-        }
-    
-        .notification.error {
-            background-color: #F44336;
-        }
-    
-        .notification.warning {
-            background-color: #FF9800;
-        }
-    
-        .notification.fade-out {
-            transform: translateX(200%);
-        }
-
-        .galeria-miniaturas img.active {
-            border: 2px solid #e63946;
-        }
-
-        .moto-recomendada {
-            background: white;
-            padding: 1rem;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .moto-recomendada img {
-            width: 100%;
-            height: 150px;
-            object-fit: contain;
-        }
-
-        .moto-recomendada .precio {
-            color: #e63946;
-            font-weight: bold;
-        }
-    `;
-    document.head.appendChild(style);
 });

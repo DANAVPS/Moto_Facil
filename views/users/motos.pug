@@ -1,45 +1,205 @@
-//- views/users/motos.pug
-extends ../layout/default.pug
+extends ../layout/default
 
 block content
-    .container
-        h1 Nuestra Galería de Motos
-
-        .filters-section
-            h3 Filtrar Motos
-            form.filters-form(action="/motos" method="GET")
-                .filter-group
-                    label(for="category") Categoría:
-                    select#category(name="category")
-                        option(value="") Todas
-                        each cat in allCategories
-                            option(value=cat, selected=cat === currentCategory)= cat
-                .filter-group
+    .filtros
+        form(method="get" action="/motos")
+            .filtros-row
+                .filtro-group
                     label(for="transmission") Transmisión:
-                    select#transmission(name="transmission")
+                    select(name="transmission" id="transmission")
                         option(value="") Todas
-                        each trans in allTransmissions
-                            option(value=trans, selected=trans === currentTransmission)= trans
-                .filter-group
-                    label(for="minPrice") Precio Mínimo:
-                    input#minPrice(type="number" name="minPrice", value=currentMinPrice)
-                .filter-group
-                    label(for="maxPrice") Precio Máximo:
-                    input#maxPrice(type="number" name="maxPrice", value=currentMaxPrice)
-                .filter-group
-                    label(for="query") Buscar:
-                    input#query(type="text" name="query" placeholder="Buscar por marca, modelo...")
-                button.btn(type="submit") Aplicar Filtros
+                        if allTransmissions && allTransmissions.length
+                            each tipo in allTransmissions
+                                option(value=tipo selected=(tipo==currentTransmission))= tipo
+                        else
+                            option(disabled) No hay transmisiones disponibles
 
-        .motos-gallery
-            if motos && motos.length > 0
-                each moto in motos
-                    .moto-card
-                        img(src=moto.main_image, alt=moto.brand + ' ' + moto.model)
-                        h3 #{moto.brand} #{moto.model}
-                        p.price Precio: #{parseFloat(moto.price).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}
-                        p.category Categoría: #{moto.category}
-                        p.transmission Transmisión: #{moto.transmission}
-                        a.btn.btn--small(href="/motos/" + moto.id) Ver Detalles
-            else
-                p No se encontraron motos con los filtros aplicados.
+                .filtro-group
+                    label(for="category") Categoría:
+                    select(name="category" id="category")
+                        option(value="") Todas
+                        if allCategories && allCategories.length
+                            each categoria in allCategories
+                                option(value=categoria selected=(categoria==currentCategory))= categoria
+                        else
+                            option(disabled) No hay categorías disponibles
+
+                .filtro-group
+                    label(for="minPrice") Precio mínimo:
+                    input(type="number" name="minPrice" id="minPrice" min="0" step="1000" placeholder="Ej: 50000")
+
+                .filtro-group
+                    label(for="maxPrice") Precio máximo:
+                    input(type="number" name="maxPrice" id="maxPrice" min="0" step="1000" placeholder="Ej: 500000")
+
+            .filtros-actions
+                button(type="submit") Filtrar
+                a(href="/motos") Limpiar filtros
+
+    h2 Lista de motos
+    .moto-lista
+        if motos && motos.length
+            each moto in motos
+                .moto-card
+                    if moto.main_image
+                        img(src=`/img/${moto.main_image}`, alt=moto.model onerror="this.src='/img/no-image.jpg'")
+                    else
+                        img(src="/img/no-image.jpg", alt="Imagen no disponible")
+                    
+                    .moto-info
+                        h3= `${moto.brand} ${moto.model}`
+                        if moto.description
+                            p.description= moto.description
+                        
+                        .moto-details
+                            if moto.category
+                                p.category Categoría: #{moto.category}
+                            if moto.transmission
+                                p.transmission Transmisión: #{moto.transmission}
+                            if moto.engine_cc
+                                p.engine CC: #{moto.engine_cc}
+                            p.price Precio: $#{moto.price ? moto.price.toLocaleString() : 'Consultar'}
+                        
+                        .moto-actions
+                            a(href=`/motos/${moto.id}` class="btn-details") Ver detalles
+        else
+            .no-results
+                p No se encontraron motos con los filtros seleccionados.
+                a(href="/motos") Ver todas las motos
+
+    style.
+        .filtros {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .filtros-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .filtro-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filtro-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .filtro-group select,
+        .filtro-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .filtros-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filtros-actions button,
+        .filtros-actions a {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .filtros-actions button {
+            background: #007bff;
+            color: white;
+        }
+        
+        .filtros-actions a {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .moto-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .moto-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .moto-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .moto-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .moto-info {
+            padding: 15px;
+        }
+        
+        .moto-info h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .moto-details p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .price {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 16px;
+        }
+        
+        .btn-details {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        .btn-details:hover {
+            background: #0056b3;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .no-results a {
+            color: #007bff;
+            text-decoration: none;
+        }
