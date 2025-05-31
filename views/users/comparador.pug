@@ -1,73 +1,101 @@
 extends ../layout/default
 
 block content
-    .comparador-motos
-        .container
-            h1 Comparador de Motocicletas
+    .container.mt-4
+        .row
+            .col-12
+                h1.text-center.mb-4
+                    i.fas.fa-balance-scale.me-2
+                    | Comparador de Motos
 
-            .comparador-introduccion
-                p Compara las características de diferentes motocicletas para tomar la mejor decisión
+                //- Selector de motos
+                .card.mb-4
+                    .card-header
+                        h4.mb-0
+                            i.fas.fa-search.me-2
+                            | Selecciona motos para comparar (máximo 3)
+                    .card-body
+                        .row
+                            .col-md-4.mb-3
+                                label.form-label Moto 1
+                                select.form-select.moto-selector(data-position="0")
+                                    option(value="") Selecciona una moto
+                                    each moto in motos
+                                        option(value=moto.id selected=(selectedIds && selectedIds.includes(moto.id) && selectedIds.indexOf(moto.id) === 0))
+                                            | #{moto.brand} #{moto.model} - $#{moto.price.toLocaleString()}
 
-            .selector-motos
-                .selector-moto
-                    label(for="moto1") Selecciona Primera Moto
-                    select#moto1(name="moto1")
-                        option(value="") Selecciona una moto
-                        each moto in motos
-                            option(value=moto.id) #{moto.marca} #{moto.modelo}
+                            .col-md-4.mb-3
+                                label.form-label Moto 2
+                                select.form-select.moto-selector(data-position="1")
+                                    option(value="") Selecciona una moto
+                                    each moto in motos
+                                        option(value=moto.id selected=(selectedIds && selectedIds.includes(moto.id) && selectedIds.indexOf(moto.id) === 1))
+                                            | #{moto.brand} #{moto.model} - $#{moto.price.toLocaleString()}
 
-                .selector-moto
-                    label(for="moto2") Selecciona Segunda Moto
-                    select#moto2(name="moto2")
-                        option(value="") Selecciona una moto
-                        each moto in motos
-                            option(value=moto.id) #{moto.marca} #{moto.modelo}
+                            .col-md-4.mb-3
+                                label.form-label Moto 3 (opcional)
+                                select.form-select.moto-selector(data-position="2")
+                                    option(value="") Selecciona una moto
+                                    each moto in motos
+                                        option(value=moto.id selected=(selectedIds && selectedIds.includes(moto.id) && selectedIds.indexOf(moto.id) === 2))
+                                            | #{moto.brand} #{moto.model} - $#{moto.price.toLocaleString()}
 
-            .resultado-comparacion
-                .moto-comparacion
-                    .moto-1
-                        .imagen-moto
-                            img(src="/api/placeholder/300/200" alt="Moto 1")
-                        .info-moto
-                            h2#nombre-moto1 Selecciona una moto
+                        .text-center.mt-3
+                            button.btn.btn-primary.btn-lg#compareBtn
+                                i.fas.fa-balance-scale.me-2
+                                | Comparar Motos
 
-                    .moto-2
-                        .imagen-moto
-                            img(src="/api/placeholder/300/200" alt="Moto 2")
-                        .info-moto
-                            h2#nombre-moto2 Selecciona una moto
+                            button.btn.btn-outline-secondary.ms-2#clearBtn
+                                i.fas.fa-eraser.me-2
+                                | Limpiar Selección
 
-                .tabla-comparacion
-                    table
-                        thead
-                            tr
-                                th Característica
-                                th 
-                                    span#moto1-nombre Moto 1
-                                th 
-                                    span#moto2-nombre Moto 2
-                        tbody
-                            tr
-                                td Precio
-                                td#precio-moto1 -
-                                td#precio-moto2 -
-                            tr
-                                td Cilindrada
-                                td#cilindrada-moto1 -
-                                td#cilindrada-moto2 -
-                            tr
-                                td Potencia
-                                td#potencia-moto1 -
-                                td#potencia-moto2 -
-                            tr
-                                td Consumo
-                                td#consumo-moto1 -
-                                td#consumo-moto2 -
-                            tr
-                                td Peso
-                                td#peso-moto1 -
-                                td#peso-moto2 -
+                //- Loading spinner
+                #loadingSpinner.text-center.d-none.mb-4
+                    .spinner-border.text-primary(role="status")
+                    p.mt-2 Cargando comparación...
 
-            .acciones-comparador
-                button#comparar-btn.btn.btn--primary Comparar
-                button#limpiar-btn.btn.btn--secondary Limpiar Selección
+                //- Tabla de comparación
+                #comparisonTable.d-none
+                    .card
+                        .card-header.bg-primary.text-white
+                            h4.mb-0
+                                i.fas.fa-table.me-2
+                                | Comparación Detallada
+                        .card-body.p-0
+                            .table-responsive
+                                table.table.table-hover.mb-0
+                                    thead.table-dark
+                                        tr#tableHeader
+                                            th.sticky-column Características
+                                    tbody#tableBody
+
+                //- Tabla de impuestos
+                #taxesTable.d-none.mt-4
+                    .card
+                        .card-header.bg-success.text-white
+                            h4.mb-0
+                                i.fas.fa-calculator.me-2
+                                | Desglose de Impuestos
+                        .card-body.p-0
+                            .table-responsive
+                                table.table.table-hover.mb-0
+                                    thead.table-dark
+                                        tr#taxesHeader
+                                            th.sticky-column Impuestos
+                                    tbody#taxesBody
+
+                //- Resumen de costos
+                #costSummary.d-none.mt-4
+                    .card
+                        .card-header.bg-warning.text-dark
+                            h4.mb-0
+                                i.fas.fa-money-bill-wave.me-2
+                                | Resumen de Costos Totales
+                        .card-body
+                            .row#costCards
+
+    //- CRÍTICO: Pasar datos de motos al JavaScript
+    script.
+        // Convertir datos de motos de Pug a JavaScript
+        window.motosData = !{JSON.stringify(motos)};
+        console.log('Datos de motos cargados:', window.motosData);

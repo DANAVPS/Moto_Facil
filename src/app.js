@@ -52,13 +52,14 @@ app.use(fileUpload({
 // app.use('/uploads', express.static(path.join(__dirname, './public/uploads')));
 app.use('/assets', express.static(path.join(__dirname, './public/assets')));
 app.use(express.static(path.join(__dirname, '../public')));
+app.use('/img', express.static(path.join(__dirname, '../public', 'img')));
 app.set('views', path.join(__dirname, '../views')); // <-- sube un nivel
 app.use(express.urlencoded({ extended: true })); // Para leer formularios tipo x-www-form-urlencoded
 
 // 5. Limitar peticiones (Rate Limiting)
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 100, // límite por IP
+    max: 1000, // límite por IP
     message: 'Demasiadas peticiones desde esta IP, por favor intenta nuevamente más tarde'
 });
 app.use('/api', limiter);

@@ -44,7 +44,7 @@ class Moto {
             console.log('SQL ejecutado:', sql);
             console.log('Valores:', values);
             console.log('Tipos de valores:', values.map(v => typeof v));
-            
+
             const result = await query(sql, values);
             return result;
         } catch (error) {
@@ -53,13 +53,13 @@ class Moto {
         }
     }
 
-    // Obtener por ID
+    // Obtener por ID con cálculo de impuestos
     static async findById(id) {
         try {
             console.log('Buscando moto con ID:', id);
-            
+
             const result = await query('SELECT * FROM motos WHERE id = ?', [id]);
-            
+
             if (!result || result.length === 0) {
                 return null;
             }
@@ -89,10 +89,117 @@ class Moto {
                 moto.technologies = [];
             }
 
+            // Calcular impuestos
+            moto.impuestos = await this.calculateTaxes(moto.price, moto.engine_cc, moto.category);
+            moto.precio_total = moto.price + moto.impuestos.total_impuestos;
+
             return moto;
         } catch (error) {
             console.error('Error en findById:', error);
             throw new Error('Error obteniendo la moto');
+        }
+    }
+
+    // Obtener múltiples motos por IDs para comparación
+    static async findByIds(ids) {
+        if (!ids || ids.length === 0) {
+            return [];
+        }
+
+        try {
+            const placeholders = ids.map(() => '?').join(',');
+            const sql = `SELECT * FROM motos WHERE id IN (${placeholders})`;
+
+            const motos = await query(sql, ids);
+
+            // Calcular impuestos para cada moto
+            for (let moto of motos) {
+                moto.impuestos = await this.calculateTaxes(moto.price, moto.engine_cc, moto.category);
+                moto.precio_total = moto.price + moto.impuestos.total_impuestos;
+
+                // Obtener imágenes adicionales
+                try {
+                    const images = await query('SELECT image_url FROM moto_images WHERE moto_id = ?', [moto.id]);
+                    moto.images = images || [];
+                } catch (error) {
+                    moto.images = [];
+                }
+
+                // Obtener tecnologías
+                try {
+                    const technologies = await query(`
+                        SELECT t.id, t.name 
+                        FROM technologies t
+                        INNER JOIN moto_technologies mt ON t.id = mt.technology_id
+                        WHERE mt.moto_id = ?
+                    `, [moto.id]);
+                    moto.technologies = technologies || [];
+                } catch (error) {
+                    moto.technologies = [];
+                }
+            }
+
+            return motos;
+        } catch (error) {
+            console.error('Error en findByIds:', error);
+            throw new Error('Error obteniendo las motos para comparar');
+        }
+    }
+
+    // Calcular impuestos según cilindraje y categoría
+    static async calculateTaxes(precio, cilindraje, categoria) {
+        try {
+            const impuestos = await query('SELECT * FROM impuestos WHERE es_activo = TRUE');
+
+            let detalleImpuestos = [];
+            let totalImpuestos = 0;
+
+            for (let impuesto of impuestos) {
+                let aplicaImpuesto = false;
+                let montoImpuesto = 0;
+
+                // Verificar si aplica según el tipo
+                if (impuesto.aplica_a === 'todas_las_motos') {
+                    aplicaImpuesto = true;
+                } else if (impuesto.aplica_a === 'por_cilindraje') {
+                    if (cilindraje >= impuesto.cilindraje_min_aplicable &&
+                        cilindraje <= impuesto.cilindraje_max_aplicable) {
+                        aplicaImpuesto = true;
+                    }
+                } else if (impuesto.aplica_a === 'por_categoria') {
+                    if (categoria === impuesto.aplica_a_categoria_moto) {
+                        aplicaImpuesto = true;
+                    }
+                }
+
+                if (aplicaImpuesto) {
+                    if (impuesto.porcentaje) {
+                        montoImpuesto = precio * impuesto.porcentaje;
+                    } else if (impuesto.monto_fijo) {
+                        montoImpuesto = impuesto.monto_fijo;
+                    }
+
+                    detalleImpuestos.push({
+                        nombre: impuesto.nombre_impuesto,
+                        monto: montoImpuesto,
+                        tipo: impuesto.porcentaje ? 'porcentaje' : 'fijo',
+                        valor_referencia: impuesto.porcentaje || impuesto.monto_fijo
+                    });
+
+                    totalImpuestos += montoImpuesto;
+                }
+            }
+
+            return {
+                detalle: detalleImpuestos,
+                total_impuestos: totalImpuestos
+            };
+        } catch (error) {
+            console.error('Error calculando impuestos:', error);
+            return {
+                detalle: [],
+                total_impuestos: 0
+            };
         }
     }
 
@@ -147,7 +254,7 @@ class Moto {
     static async getDistinctCategories() {
         try {
             const results = await query(
-                'SELECT DISTINCT category FROM motos WHERE category IS NOT NULL ORDER BY category', 
+                'SELECT DISTINCT category FROM motos WHERE category IS NOT NULL ORDER BY category',
                 []
             );
             return results.map(row => row.category);
@@ -161,7 +268,7 @@ class Moto {
     static async getDistinctTransmissions() {
         try {
             const results = await query(
-                'SELECT DISTINCT transmission FROM motos WHERE transmission IS NOT NULL ORDER BY transmission', 
+                'SELECT DISTINCT transmission FROM motos WHERE transmission IS NOT NULL ORDER BY transmission',
                 []
             );
             return results.map(row => row.transmission);
@@ -209,6 +316,20 @@ class Moto {
         } catch (error) {
             console.error('Error contando motos:', error);
             return 0;
+        }
+    }
+
+    // Obtener motos básicas para el selector del comparador
+    static async getBasicMotos() {
+        try {
+            const result = await query(
+                'SELECT id, brand, model, price, category, engine_cc, main_image,nivel_experiencia, freno_trasero, capacidad_del_tanque, potencia, freno_delantero, peso, caja_de_velocidades, garantia FROM motos ORDER BY brand, model',
+                []
+            );
+            return result;
+        } catch (error) {
+            console.error('Error obteniendo motos básicas:', error);
+            return [];
         }
     }
 }

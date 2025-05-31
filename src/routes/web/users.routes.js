@@ -2,6 +2,7 @@ import express, { Router } from 'express';
 import {enviarFormularioContacto} from '../../controllers/contacto.controller.js';
 import { recibirAsesoria, mostrarDetallesMoto } from '../../controllers/asesoria.controller.js';
 import CalculadoraController from '../../controllers/calculadora.controller.js';
+import ComparatorController from '../../controllers/comparador.controller.js';
 
 const router = express.Router();
 
@@ -51,6 +52,13 @@ router.get('/Multimedia', (req, res) => {
         user: req.user || null
     });
 });
+
+// routes.js
+router.get('/comparador', ComparatorController.showComparator);
+router.post('/comparar', ComparatorController.getMotosForComparison); // Cambiado a POST
+router.get('/comparar', ComparatorController.compareMotos); // Mantenemos el GET para URLs compartibles
+router.get('/comparador/buscar', ComparatorController.searchMotos);
+router.get('/comparador/:id', ComparatorController.getMotoDetails);
 
 // Página de la calculadora
 router.get('/Calculadora', CalculadoraController.mostrarCalculadora);
