@@ -13,7 +13,8 @@ html(lang="es")
                 .header__logo
                     a(href="/")
                         img(src="/img/LOGO.jpg" alt="Logo Tienda de Motos")
-                .header__nav
+                button.menu-toggle#menuToggle ☰
+                .header__nav#mainNav
                     ul
                         li
                             a(href="/") Inicio
@@ -76,12 +77,19 @@ html(lang="es")
                             i.fab.fa-twitter.social-icon
 
         script.
-            document.querySelectorAll('.nav-item-dropdown > a').forEach(toggle => {
-                toggle.addEventListener('click', e => {
-                    e.preventDefault();
-                    const menu = toggle.nextElementSibling;
-                    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-                });
+            // Mostrar/ocultar el menú hamburguesa
+            document.getElementById("menuToggle").addEventListener("click", function () {
+                document.getElementById("mainNav").classList.toggle("active");
             });
 
+            // Alternar visibilidad del dropdown solo en móviles
+            document.querySelectorAll('.nav-item-dropdown > a').forEach(toggle => {
+                toggle.addEventListener('click', e => {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        const menu = toggle.nextElementSibling;
+                        menu.style.display = (menu.style.display === 'flex' || menu.style.display === '') ? 'none' : 'flex';
+                    }
+                });
+            });
         script(src="/js/script.js")

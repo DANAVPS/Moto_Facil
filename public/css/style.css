@@ -711,6 +711,68 @@ p {
     margin-bottom: 0.5rem;
 }
 
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+    }
+
+    .header__nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--white);
+        box-shadow: var(--box-shadow);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem 2rem;
+        display: none;
+    }
+
+    .header__nav.active {
+        display: flex;
+    }
+
+    .header__nav ul {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .header__nav li {
+        margin: 0.5rem 0;
+        width: 100%;
+    }
+
+    .dropdown-menu {
+        position: static;
+        transform: none;
+        width: 100%;
+        box-shadow: none;
+        opacity: 1;
+        visibility: visible;
+        display: none;
+        padding: 1rem 0;
+    }
+
+    .dropdown-content {
+        flex-direction: column;
+    }
+
+    .dropdown-column {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .menu-toggle {
+        display: none;
+    }
+}
+
 /* Footer */
 .footer .container {
     background-color: var(--secondary-color);
@@ -718,10 +780,12 @@ p {
     padding: 3rem 0 1rem;
     display: flex;
     align-items: flex-start;
-    justify-content: center; /* CENTRA sin dejar márgenes blancos */
+    justify-content: center;
+    /* CENTRA sin dejar márgenes blancos */
     flex-wrap: wrap;
     gap: 2rem;
-    width: 100%; /* ocupa todo el ancho */
+    width: 100%;
+    /* ocupa todo el ancho */
 }
 
 .footer__info,
@@ -756,9 +820,11 @@ p {
 .social-icons {
     display: flex;
     gap: 1rem;
-    justify-content: center; /* CENTRA sin dejar márgenes blancos */
+    justify-content: center;
+    /* CENTRA sin dejar márgenes blancos */
 
 }
+
 .social-icon {
     display: flex;
     align-items: center;
@@ -2215,7 +2281,8 @@ p {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     position: relative;
     display: flex;
-    flex-direction: column; /* Forzar dirección vertical */
+    flex-direction: column;
+    /* Forzar dirección vertical */
 }
 
 .seccion-resultado h2 {
@@ -2227,8 +2294,10 @@ p {
     position: relative;
     background-color: var(--white);
     padding: 1rem 0;
-    width: 100%; /* Asegurar ancho completo */
-    order: 1; /* Forzar que aparezca primero */
+    width: 100%;
+    /* Asegurar ancho completo */
+    order: 1;
+    /* Forzar que aparezca primero */
 }
 
 .seccion-resultado h2::after {
@@ -2246,13 +2315,16 @@ p {
 /* Motorcycle Cards - CORREGIDO para aparecer debajo */
 .resultado-motos,
 #resultado-asesoria {
-    display: flex; /* Cambiar de grid a flex */
-    flex-direction: column; /* Dirección vertical */
+    display: flex;
+    /* Cambiar de grid a flex */
+    flex-direction: column;
+    /* Dirección vertical */
     gap: 2rem;
     margin-top: 3rem;
     width: 100%;
     clear: both;
-    order: 2; /* Forzar que aparezca después del h2 */
+    order: 2;
+    /* Forzar que aparezca después del h2 */
 }
 
 /* Cuando hay múltiples motos, usar grid dentro del contenedor */
@@ -2272,8 +2344,10 @@ p {
     border: 2px solid transparent;
     position: relative;
     display: block;
-    width: 100%; /* Asegurar ancho completo */
-    margin-bottom: 1rem; /* Espaciado entre tarjetas */
+    width: 100%;
+    /* Asegurar ancho completo */
+    margin-bottom: 1rem;
+    /* Espaciado entre tarjetas */
 }
 
 .tarjeta-moto:hover {
@@ -2333,6 +2407,7 @@ p {
 
 /* Responsive adjustments */
 @media (max-width: 992px) {
+
     .resultado-motos,
     #resultado-asesoria,
     .has-multiple-results #resultado-asesoria {
@@ -2348,6 +2423,7 @@ p {
 }
 
 @media (max-width: 768px) {
+
     .resultado-motos,
     #resultado-asesoria {
         gap: 1.5rem;
