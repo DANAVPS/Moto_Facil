@@ -37,7 +37,7 @@ router.post('/enviar-contacto', enviarFormularioContacto);
 
 router.get('/Asesoria', (req, res) => {
     // Podríamos obtener motos destacadas y blogs recientes para mostrar en el home
-    res.render('users/Asesoria', {
+    res.render('users/asesoria', {
         title: 'MotoApp - Tu comunidad de motocicletas',
         user: req.user || null
     });
