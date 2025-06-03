@@ -3,76 +3,199 @@ import { pool } from '../database/connection.js';
 export const recibirAsesoria = async (req, res) => {
     try {
         const {
-            edad,
-            experiencia,
-            usoPrevisto,
+            edad_recomendada,
+            nivel_experiencia,
+            uso_previsto,
             presupuesto_rango,
-            transmision,
-            caracteristicas
+            transmission
         } = req.body;
 
-        // ✅ Mapeo de edades del formulario al formato de la BD
-        const edadMap = {
-            '16-25': '16-30 años',
-            '18-30': '18-35 años',
-            '25-35': '25-40 años',
-            '30-45': '30-50 años'
-        };
-        const edadFinal = edadMap[edad] || edad;
+        console.log('🧾 Datos recibidos:', req.body);
 
-        // ✅ Convertir presupuesto
-        const [presupuestoMin, presupuestoMax] = presupuesto_rango.split('-').map(Number);
+        // Validación robusta del rango de presupuesto
+        let presupuestoMin = 0;
+        let presupuestoMax = Number.MAX_SAFE_INTEGER;
 
-        // ✅ Construcción del query dinámico
-        let query = `
-            SELECT * FROM motos
-            WHERE presupuesto_minimo <= ? AND presupuesto_maximo >= ?
-        `;
-        const params = [presupuestoMax, presupuestoMin];
+        if (typeof presupuesto_rango === 'string' && presupuesto_rango.includes('-')) {
+            const [minStr, maxStr] = presupuesto_rango.split('-');
+            presupuestoMin = Number(minStr.trim());
+            presupuestoMax = Number(maxStr.trim());
 
-        if (edadFinal) {
-            query += ` AND edad_recomendada LIKE ?`;
-            params.push(`%${edadFinal}%`);
-        }
-        if (experiencia) {
-            query += ` AND nivel_experiencia LIKE ?`;
-            params.push(`%${experiencia}%`);
-        }
-        if (usoPrevisto) {
-            query += ` AND uso_previsto LIKE ?`;
-            params.push(`%${usoPrevisto}%`);
-        }
-        if (transmision) {
-            query += ` AND transmission = ?`;
-            params.push(transmision);
+            if (isNaN(presupuestoMin)) presupuestoMin = 0;
+            if (isNaN(presupuestoMax)) presupuestoMax = Number.MAX_SAFE_INTEGER;
         }
 
-        const [motos] = await pool.query(query, params);
+        console.log('💰 Presupuesto procesado:', { presupuestoMin, presupuestoMax });
 
-        // ✅ Filtrado adicional por características
-        let motosFiltradas = motos;
-        if (Array.isArray(caracteristicas) && caracteristicas.length > 0) {
-            motosFiltradas = motos.filter(moto =>
-                caracteristicas.every(c =>
-                    moto.description.toLowerCase().includes(c.toLowerCase())
+        // Parse age range from frontend (e.g., "30-50")
+        let edadMin = 0;
+        let edadMax = 100;
+
+        if (typeof edad_recomendada === 'string' && edad_recomendada.includes('-')) {
+            const [minAge, maxAge] = edad_recomendada.split('-');
+            edadMin = Number(minAge.trim());
+            edadMax = Number(maxAge.trim());
+        }
+
+        console.log('👤 Edad procesada:', { edadMin, edadMax });
+
+        // ✅ CONSULTA MEJORADA - Más flexible y realista
+        const query = `
+            SELECT *, 
+                   (CASE 
+                    WHEN nivel_experiencia = ? THEN 3
+                    WHEN nivel_experiencia = 'todos' THEN 2
+                    ELSE 1
+                   END) as experience_match,
+                   (CASE 
+                    WHEN uso_previsto LIKE ? THEN 3
+                    WHEN uso_previsto LIKE '%todos%' THEN 2
+                    ELSE 1
+                   END) as usage_match,
+                   (CASE 
+                    WHEN transmission = ? THEN 2
+                    ELSE 1
+                   END) as transmission_match
+            FROM motos
+            WHERE
+                price BETWEEN ? AND ? AND
+                (
+                    -- Age range overlap check
+                    edad_recomendada IS NULL OR
+                    edad_recomendada LIKE '%todos%' OR
+                    (
+                        CAST(SUBSTRING_INDEX(REPLACE(edad_recomendada, ' años', ''), '-', 1) AS UNSIGNED) <= ? AND
+                        CAST(SUBSTRING_INDEX(REPLACE(edad_recomendada, ' años', ''), '-', -1) AS UNSIGNED) >= ?
+                    )
+                ) AND
+                (
+                    -- Experience level - exact match only
+                    nivel_experiencia IS NULL OR
+                    nivel_experiencia = 'todos' OR
+                    nivel_experiencia = ?
+                ) AND
+                (
+                    -- Usage type - more flexible matching
+                    uso_previsto IS NULL OR
+                    uso_previsto LIKE '%todos%' OR
+                    uso_previsto LIKE ? OR
+                    (? LIKE '%ciudad%' AND uso_previsto LIKE '%ciudad%') OR
+                    (? LIKE '%viaje%' AND uso_previsto LIKE '%largo%') OR
+                    (? LIKE '%deportivo%' AND uso_previsto LIKE '%deporti%')
+                ) AND
+                (
+                    -- Transmission
+                    transmission IS NULL OR
+                    transmission = ? OR
+                    ? = 'cualquiera'
                 )
-            );
+            ORDER BY 
+                experience_match DESC,
+                usage_match DESC,
+                transmission_match DESC,
+                price ASC
+            LIMIT 20
+        `;
+
+        const usagePattern = `%${uso_previsto}%`;
+
+        const [motos] = await pool.query(query, [
+            // Experience scoring
+            nivel_experiencia,
+            // Usage scoring  
+            usagePattern,
+            // Transmission scoring
+            transmission,
+            // Price range
+            presupuestoMin,
+            presupuestoMax,
+            // Age range overlap
+            edadMax,
+            edadMin,
+            // Experience conditions
+            nivel_experiencia,
+            // Usage conditions
+            usagePattern,
+            uso_previsto,
+            uso_previsto,
+            uso_previsto,
+            // Transmission conditions
+            transmission,
+            transmission
+        ]);
+
+        console.log('✅ Motos encontradas:', motos.length);
+        console.log('📋 Top 3 motos recomendadas:', motos.slice(0, 3));
+
+        // Si no hay resultados exactos, hacer búsqueda más amplia
+        let motosFinales = motos;
+
+        if (motos.length === 0) {
+            console.log('🔍 Búsqueda ampliada...');
+
+            const queryAmplia = `
+                SELECT *, 
+                       ABS(price - ?) as price_diff
+                FROM motos
+                WHERE price BETWEEN ? AND ?
+                ORDER BY price_diff ASC
+                LIMIT 10
+            `;
+
+            const precioPromedio = (presupuestoMin + presupuestoMax) / 2;
+            const [motosAmplia] = await pool.query(queryAmplia, [
+                precioPromedio,
+                presupuestoMin * 0.8, // 20% más flexible hacia abajo
+                presupuestoMax * 1.2   // 20% más flexible hacia arriba
+            ]);
+
+            motosFinales = motosAmplia;
+            console.log('📈 Búsqueda ampliada encontró:', motosFinales.length, 'motos');
         }
 
-        console.log('Motos recomendadas:', motosFiltradas);
+        // Respuesta mejorada con más información
+        const mensaje = motosFinales.length > 0 ?
+            `Se encontraron ${motosFinales.length} motos recomendadas para tu perfil` :
+            'No se encontraron motos que coincidan con tu perfil. Intenta ajustar tu presupuesto o criterios.';
 
-        // ✅ CAMBIO: Devolver JSON en lugar de render
-        res.json({
-            status: 'success',
-            recomendaciones: motosFiltradas
-        });
+        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+            res.json({
+                success: true,
+                recomendaciones: motosFinales,
+                mensaje: mensaje,
+                criterios: {
+                    edad_recomendada,
+                    nivel_experiencia,
+                    uso_previsto,
+                    transmission,
+                    presupuesto: { min: presupuestoMin, max: presupuestoMax }
+                }
+            });
+        } else {
+            res.render('users/Asesoria', {
+                title: 'MotoApp - Asesoría',
+                user: req.user || null,
+                recomendaciones: motosFinales,
+                mensaje: mensaje
+            });
+        }
 
     } catch (error) {
-        console.error('Error al procesar asesoría:', error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Error al procesar asesoría'
-        });
+        console.error('❌ Error al procesar asesoría:', error);
+
+        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+            res.status(500).json({
+                success: false,
+                error: 'Error al procesar la asesoría',
+                details: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        } else {
+            res.status(500).render('users/Asesoria', {
+                title: 'MotoApp - Error',
+                user: req.user || null,
+                error: 'Error al procesar la asesoría'
+            });
+        }
     }
 };
 
@@ -85,7 +208,6 @@ export const mostrarDetallesMoto = async (req, res) => {
         console.log('Headers Accept:', req.headers.accept);
         console.log('¿Es XHR?:', req.xhr);
 
-        // Consultar la moto específica
         const [moto] = await pool.query('SELECT * FROM motos WHERE id = ?', [id]);
 
         console.log('Moto encontrada:', moto && moto.length > 0 ? 'SÍ' : 'NO');
@@ -96,10 +218,9 @@ export const mostrarDetallesMoto = async (req, res) => {
                 message: 'Moto no encontrada'
             });
         }
-        
+
         console.log('Renderizando vista users/infomoto');
 
-        // Renderizar la vista infomoto.pug con los datos de la moto
         res.render('users/infomoto', {
             moto: moto[0],
             title: `${moto[0].brand} ${moto[0].model}`,

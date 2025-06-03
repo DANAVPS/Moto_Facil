@@ -5,6 +5,8 @@ html(lang="es")
         meta(name="viewport" content="width=device-width, initial-scale=1.0")
         title Tienda de Motos | #{title}
         link(rel="stylesheet" href="/css/style.css")
+        link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css")
+        link(href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet")
     body    
         header.header
             .container
@@ -35,7 +37,7 @@ html(lang="es")
                         li
                             a(href="/Tecnologias") Tecnologías
                         li
-                            a(href="/multimedia") Blogs
+                            a(href="/multimedia") Contenido Multimedia
                         li
                             a(href="/Contacto") Contacto
         main.main
@@ -67,18 +69,11 @@ html(lang="es")
                     h3 Síguenos
                     .social-icons
                         a(href="#" target="_blank")
-                            i.social-icon 
+                            i.fab.fa-facebook-f.social-icon
                         a(href="#" target="_blank")
-                            i.social-icon Instagram
+                            i.fab.fa-instagram.social-icon
                         a(href="#" target="_blank")
-                            i.social-icon Twitter
-
-                //- .footer__legal
-                //-     a(href="/reglamento") Reglamento
-                //-     a(href="/asesoria") Asesoría
-
-            .footer__copyright
-                p &copy; #{new Date().getFullYear()} Tienda de Motos. Todos los derechos reservados.
+                            i.fab.fa-twitter.social-icon
 
         script.
             document.querySelectorAll('.nav-item-dropdown > a').forEach(toggle => {
@@ -88,6 +83,5 @@ html(lang="es")
                     menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
                 });
             });
-        
+
         script(src="/js/script.js")
-        

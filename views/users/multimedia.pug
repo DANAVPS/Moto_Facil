@@ -1,9 +1,110 @@
 extends ../layout/default
+
 block content
-    // videojuego scratch 
-    <iframe src="https://scratch.mit.edu/projects/1168122542/embed" allowtransparency="true" width="485" height="402" frameborder="0" scrolling="no" allowfullscreen></iframe>
-    //avatar introductorio a motofacil
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/LdHLyTxaPdE?si=_vdoJji1y36AOKJ0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>    
-    //video de appinventor de appmovil
-    //kahoot de la app de motofacil
-    <iframe src="https://kahoot.it/embed/0f8b1c2d-3a4e-4f5b-9c6c-7d8e9f0a1b2c" width="100%" height="600" frameborder="0" allowfullscreen></iframe>
+    h1 Motofácil - Contenido Multimedia
+
+    section.media-section
+        iframe(
+            src="https://kahoot.it/embed/0f8b1c2d-3a4e-4f5b-9c6c-7d8e9f0a1b2c" 
+            width="100%" 
+            height="600" 
+            frameborder="0" 
+            allowfullscreen
+        )
+        .media-text
+            h2 Kahoot - Preguntas sobre Motofácil
+            p Participa en nuestro Kahoot para poner a prueba tus conocimientos sobre Motofácil. ¡Diviértete aprendiendo!
+            P PIN 02077095
+
+    section.media-section
+        iframe(
+            width="560" 
+            height="315" 
+            src="https://www.youtube.com/embed/LdHLyTxaPdE?si=_vdoJji1y36AOKJ0" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerpolicy="strict-origin-when-cross-origin" 
+            allowfullscreen
+        )
+        .media-text
+            h2 Avatar Presentando la Página
+            p Video introductorio de Motofácil, presentado por nuestro avatar virtual.
+
+    section.media-section
+        iframe(
+            width="337" 
+            height="599" 
+            src="https://www.youtube.com/embed/JMgpkUQRIho" 
+            title="appinventor motofacil" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerpolicy="strict-origin-when-cross-origin" 
+            allowfullscreen
+        )
+        .media-text
+            h2 Aplicación Móvil - App Inventor
+            p Video demostrativo de la aplicación creada en App Inventor
+
+    section.media-section
+        iframe(
+            src="https://scratch.mit.edu/projects/1168122542/embed" 
+            allowtransparency="true" 
+            width="485" 
+            height="402" 
+            frameborder="0" 
+            scrolling="no" 
+            allowfullscreen
+        )
+        .media-text
+            h2 Videojuego - Carrera de Motos (Scratch)
+            p Videojuego de carreras de motos desarrollado en Scratch. Puedes jugarlo directamente en la plataforma.
+    style.
+        .media-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            margin-bottom: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .media-section iframe {
+            flex: 1 1 50%;
+            max-width: 100%;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .media-text {
+            flex: 1 1 45%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .media-text h2 {
+            text-align: center;
+            color: var(--secondary-color);
+        }
+
+        .media-text p {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .media-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .media-text h2 {
+                text-align: center;
+            }
+
+            .media-text p {
+                text-align: justify;
+            }
+        }

@@ -64,15 +64,21 @@ block content
 
     section.contact-map
         .container
-            h2 Nuestra Ubicación
-            .map-container
-                // Aquí irá el mapa (puedes insertar un iframe de Google Maps o similar)
-                img(src="/api/placeholder/800/400" alt="Ubicación de la tienda")
-    section.pre-footer-cta
-        .container
-            .cta-content
-                h2 ¿Aún Tienes Preguntas?
-                p Nuestro equipo está listo para ayudarte
-                .cta-buttons
-                    a.btn.btn--primary(href="/Asesoria") Asesoría Personalizada
-                    a.btn.btn--secondary(href="tel:+57123456789") Llamar Ahora
+        h2 Nuestra Ubicación
+        iframe(
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3582.827457011568!2d-73.12003892551613!3d7.108235816093265!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e683f56ec6e978f%3A0x22d5fa972ece37fe!2sLa%20isla!5e1!3m2!1ses-419!2sco!4v1748969420980!5m2!1ses-419!2sco"
+            width="100%"
+            height="450"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+        )
+        section.pre-footer-cta
+            .container
+                .cta-content
+                    h2 ¿Aún Tienes Preguntas?
+                    p Nuestro equipo está listo para ayudarte
+                    .cta-buttons
+                        a.btn.btn--primary(href="/Asesoria") Asesoría Personalizada
+                        a.btn.btn--secondary(href="tel:+57123456789") Llamar Ahora

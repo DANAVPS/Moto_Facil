@@ -732,8 +732,16 @@ document.addEventListener('DOMContentLoaded', () => {
         advisoryForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            // Mostrar loading
+            const submitBtn = advisoryForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Procesando...';
+            submitBtn.disabled = true;
+
             const formData = new FormData(advisoryForm);
             const data = Object.fromEntries(formData.entries());
+
+            console.log('📤 Datos enviados:', data);
 
             try {
                 const response = await fetch('/Asesoria', {
@@ -744,17 +752,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify(data)
                 });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('Respuesta del servidor:', result);
-                    showNotification('Asesoría recibida. Mostrando recomendaciones...');
+                const result = await response.json();
+                console.log('📥 Respuesta del servidor:', result);
+
+                if (response.ok && result.success) {
+                    showNotification(result.mensaje || 'Asesoría procesada correctamente');
                     displayRecommendedMotos(result.recomendaciones);
+
+                    // Scroll suave a los resultados
+                    document.getElementById('resultado-asesoria')?.scrollIntoView({
+                        behavior: 'smooth'
+                    });
                 } else {
-                    throw new Error('Error al enviar la solicitud');
+                    throw new Error(result.error || 'Error al procesar la solicitud');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                showNotification('Error al enviar la solicitud', 'error');
+                console.error('❌ Error:', error);
+                showNotification('Error al enviar la solicitud: ' + error.message, 'error');
+            } finally {
+                // Restaurar botón
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             }
         });
     };
@@ -762,20 +780,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayRecommendedMotos = (motos) => {
         const resultsContainer = document.getElementById('resultado-asesoria');
 
-        if (!resultsContainer || !motos || !motos.length) {
-            showNotification('No se encontraron motos recomendadas', 'warning');
+        if (!resultsContainer) {
+            console.error('❌ No se encontró el contenedor de resultados');
             return;
         }
 
-        resultsContainer.innerHTML = motos.map(moto => `
-            <div class="moto-recomendada">
-                <img src="/img/${moto.main_image}" alt="${moto.brand} ${moto.model}">
-                <h3>${moto.brand} ${moto.model}</h3>
-                <p class="precio">${parseFloat(moto.price).toLocaleString()}</p>
-                <p class="categoria">${moto.category}</p>
-                <a href="/motos/${moto.id}" class="btn btn--small">Ver detalles</a>
+        if (!motos || !motos.length) {
+            resultsContainer.innerHTML = `
+            <div class="no-results">
+                <h3>😔 No se encontraron motos</h3>
+                <p>Intenta ajustar tus criterios de búsqueda</p>
             </div>
-        `).join('');
+        `;
+            return;
+        }
+
+        resultsContainer.innerHTML = `
+        <h3>🏍️ Motos recomendadas para ti (${motos.length})</h3>
+        <div class="motos-grid">
+            ${motos.map(moto => `
+                <div class="moto-recomendada">
+                    <img src="/img/${moto.main_image || 'default-moto.jpg'}" 
+                         alt="${moto.brand} ${moto.model}"
+                         onerror="this.src='/img/default-moto.jpg'">
+                    <div class="moto-info">
+                        <h4>${moto.brand} ${moto.model}</h4>
+                        <p class="precio">💰 $${parseFloat(moto.price).toLocaleString('es-CO')}</p>
+                        <p class="categoria">📂 ${moto.category}</p>
+                        <p class="descripcion">${moto.description || 'Sin descripción disponible'}</p>
+                        <div class="moto-specs">
+                            <span>🔧 ${moto.transmission}</span>
+                            <span>👤 ${moto.nivel_experiencia}</span>
+                            <span>🎯 ${moto.uso_previsto}</span>
+                        </div>
+                        <a href="/motos/${moto.id}" class="btn btn--small">Ver detalles</a>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
     };
 
     // --------------------------
