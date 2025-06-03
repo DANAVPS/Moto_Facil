@@ -5,7 +5,7 @@ export const enviarFormularioContacto = async (req, res) => {
 
     try {
         const transporter = nodemailer.createTransport({
-            host: 'smtp-relay.brevo.com',
+            host: 'smtp-relay.sendinblue.com',
             port: 587,
             auth: {
                 user: '8dd5dd002@smtp-brevo.com',
